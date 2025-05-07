@@ -156,12 +156,6 @@
         <mxCell id="c8FMzv6_t2cm4ywAYGO9-112" value="&lt;font style=&quot;font-size: 21px;&quot;&gt;Loans Funded&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="c8FMzv6_t2cm4ywAYGO9-76">
           <mxGeometry x="150" y="295.5" width="220" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="c8FMzv6_t2cm4ywAYGO9-113" value="&lt;font style=&quot;font-size: 21px;&quot;&gt;Available to Lend/Borrow&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="c8FMzv6_t2cm4ywAYGO9-76">
-          <mxGeometry x="679.5" y="350" width="251" height="15.5" as="geometry" />
-        </mxCell>
-        <mxCell id="c8FMzv6_t2cm4ywAYGO9-114" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;Ξ 0.8 BTC&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;gradientColor=#b3b3b3;strokeColor=#666666;" vertex="1" parent="c8FMzv6_t2cm4ywAYGO9-76">
-          <mxGeometry x="630" y="370" width="350" height="30" as="geometry" />
-        </mxCell>
         <mxCell id="c8FMzv6_t2cm4ywAYGO9-115" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;Ξ 0.05 BTC&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;gradientColor=#b3b3b3;strokeColor=#666666;" vertex="1" parent="c8FMzv6_t2cm4ywAYGO9-76">
           <mxGeometry x="630" y="430" width="350" height="30" as="geometry" />
         </mxCell>
