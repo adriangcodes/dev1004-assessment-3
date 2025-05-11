@@ -6,7 +6,6 @@
   "directories": {
     "doc": "docs"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --watch index.js",
@@ -23,8 +22,12 @@
   },
   "homepage": "https://github.com/TysonPWilliams/dev1003-p2p-crypto-lending-tracker#readme",
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "helmet": "^8.1.0",
     "mongoose": "^8.14.2"
   },
-  "type" : "module"
+  "type": "module"
 }
