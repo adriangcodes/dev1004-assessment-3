@@ -1,0 +1,30 @@
+{
+  "name": "dev1003-p2p-crypto-lending-tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --watch index.js",
+    "seed": "node seed.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TysonPWilliams/dev1003-p2p-crypto-lending-tracker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TysonPWilliams/dev1003-p2p-crypto-lending-tracker/issues"
+  },
+  "homepage": "https://github.com/TysonPWilliams/dev1003-p2p-crypto-lending-tracker#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "mongoose": "^8.14.2"
+  },
+  "type" : "module"
+}
