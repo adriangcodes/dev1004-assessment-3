@@ -23,11 +23,21 @@ const loanRequestsSchema = new Schema({
     },
     request_date: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        validate: {
+            validator: (v) => v <= Date.now(),
+            message: 'Request date cannot be in the future'
+        }
     },
     expiry_date: {
         type: Date,
-        required: true
+        required: true,
+        // Ensure expiry date is after request date
+        validate: {
+            validator: function (v) {
+                return v > this.request_date;
+            }
+        }
     }
 });
 
