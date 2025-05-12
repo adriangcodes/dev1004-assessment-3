@@ -11,3 +11,5 @@ export async function disconnect() {
     await mongoose.connection.close()
     console.log(mongoose.connection.readyState == 0 ? "Disconnected from MongoDB" : "Failed to disconnect from MongoDB")
 }
+
+export default { connect, disconnect }
