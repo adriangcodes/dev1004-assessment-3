@@ -17,8 +17,11 @@ router.post("/loan_request", async (req, res) => {
         // Get post data from the request body
         const bodyData = req.body;
 
-        // Check if the user exists
-        const user = await User
     
     }
-)
+    catch {
+        // TODO: Catch specific errors and send appropriate messages
+        return
+    }
+
+})
