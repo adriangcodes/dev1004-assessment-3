@@ -1,20 +1,18 @@
 import { Router } from "express";
-import LoanRequest from "../models/loan_request.js";
-import InterestTerm from "../models/interest_term.js";
-import Cryptocurrency from "../models/cryptocurrency.js";
-import User from "../models/user.js";
-import { auth } from "../middleware/auth.js";
+import jwt from "jsonwebtoken";
+import { auth } from "../auth.js"; // Import the JWT middleware
+
 
 const router = Router();
 // Middleware to verify JWT token
-router.use(auth());
+router.use(auth);
 
 // Create a new loan request
-router.post("/loan_request", async (req, res) => {
+router.post("/loan-request", auth, async (req, res) => {
     
     try {
         // JWT middleware adds 'req.auth' containing decoded payload
-        const userId = req.auth?.id;
+        const userId = req.auth?._id;
 
         if (!userId) {
             return res.status(401).json({ error: "Unauthorized: no user ID in token" });
@@ -42,3 +40,5 @@ router.post("/loan_request", async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 })
+
+export default router;
