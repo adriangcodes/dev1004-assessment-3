@@ -59,11 +59,15 @@ router.post('/deals', auth, async (req, res) => {
 // Update deal (admin only)
 async function update(req, res) {
     try {
+        // Find deal by id
         const deal = await Deal.findById(req.params.id)
+        // Return error if id does not exist
         if (!deal) {
             return res.status(404).send({ error: `Deal with id ${req.params.id} not found.` })
         }
+        // Update deal if id exists
         const updateDeal = await Deal.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' })
+        // Send response to client
         res.status(200).send(updateDeal)
     } catch (err) {
         res.status(400).send({ error: err.message })
