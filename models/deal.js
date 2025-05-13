@@ -3,11 +3,11 @@ import User from './user.js'
 import LoanRequest from './loan_request.js'
 
 const dealSchema = new Schema({
-  lender_id: {
+  lenderId: {
     type: Schema.Types.ObjectId,
     ref: User
   },
-  loan_details: {
+  loanDetails: {
     type: Schema.Types.ObjectId,
     ref: LoanRequest
   },
