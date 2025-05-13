@@ -22,6 +22,18 @@ router.get('/deals', auth, async (req, res) => {
 // Get all deals (authorised user only)
 
 // Create deal (authorised user only)
+router.post('/deals', auth, async (req, res) => {
+    try {
+        // Get post data from request body
+        const bodyData = req.body
+        // Create a new Deal instance
+        const deal = await Deal.create(bodyData)
+        // Send response to client
+        res.status(201).send(deal)
+    } catch(err) {
+        res.status(400).send({ error: err.message })
+    }
+ })
 
 // Update deal (authorised user only)
 
