@@ -119,14 +119,6 @@ router.post('/fund-loan', auth, async (req, res) => {
         const cryptoSymbol = loanRequest.cryptocurrency.symbol;
         console.log(cryptoSymbol);
 
-        console.log('Funder wallet:', funder.wallet);
-        console.log('cryptoSymbol:', cryptoSymbol);
-        console.log('Current balance:', funder.wallet?.[cryptoSymbol]);
-        console.log('Funding amount:', funding_amount);
-
-
-
-        // TODO: Add funder.wallet as a field in the User model
         const currentBalance = funder.wallet?.get(cryptoSymbol) ?? 0;
 
         if (currentBalance < funding_amount) {
