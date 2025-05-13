@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import db from './db.js'
 import User from './models/user.js'
+import Cryptocurrency from './models/cryptocurrency.js'
 
 // Connect to DB
 db.connect()
@@ -20,12 +21,63 @@ const users = [
     },
 ]
 
+
 // Erase any existing Users
 await User.deleteMany()
 console.log('Users erased.')
 // Creates and saves a new User to MongoDB for each document in users
 const u = await User.create(users)
 console.log('Users created.')
+
+// Cryptocurrency seed data
+const cryptocurrencies = [
+    {
+        symbol: 'BTC',
+        name: 'Bitcoin'
+    },
+    {
+        symbol: 'ETH',
+        name: 'Ethereum'
+    },
+    {
+        symbol: 'LTC',
+        name: 'Litecoin'
+    },
+    {
+        symbol: 'XRP',
+        name: 'Ripple'
+    },
+    {
+        symbol: 'DOGE',
+        name: 'Dogecoin'
+    },
+    {
+        symbol: 'SOL',
+        name: 'Solana'
+    },
+    {
+        symbol: 'BNB',
+        name: 'Binance Coin'
+    },
+    {
+        symbol: 'ADA',
+        name: 'Cardano'
+    },
+    {
+        symbol: 'DOT',
+        name: 'Polkadot'
+    },
+    {
+        symbol: 'MATIC',
+        name: 'Polygon'
+    }
+]
+
+await Cryptocurrency.deleteMany()
+console.log('Cryptocurrencies erased.')
+// Creates and saves the cryptocurrencies to MongoDB
+const c = await Cryptocurrency.create(cryptocurrencies)
+console.log('Cryptocurrencies created.')
 
 // Disconnect from DB
 db.disconnect()

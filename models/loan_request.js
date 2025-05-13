@@ -32,6 +32,11 @@ const loanRequestSchema = new Schema({
     expiry_date: {
         type: Date,
         required: true,
+        default: () => {
+            const date = new Date();
+            date.setDate(date.getDate() + 30); // Default to 30 days from today
+            return date;
+        },
         // Ensure expiry date is after request date
         validate: {
             validator: function (v) {
