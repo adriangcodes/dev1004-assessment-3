@@ -3,23 +3,32 @@ import { Schema, model } from 'mongoose'
 const userSchema = new Schema({
   walletId: {
     type: String,
-    required: true,
+    required: [true, 'Please enter a valid Wallet ID.'],
     unique: true,
     minLength: 1,
     maxLength: 200
   },
   email: {
     type: String,
-    required: true,
+    required: [true, 'Please enter a valid email address.'],
     unique: true,
     minLength: 3,
-    maxLength: 200
-  },
+    maxLength: 200,
+    match: [/.+@.+\..+/, 'Please enter a valid email address.'],
+    lowercase: true,
+    trim: true
+    },
   password: {
     type: String,
-    required: true,
-    minLength: 8,
-    maxLength: 100
+    required: [true, 'Please enter a valid password.'],
+    minLength: [8, 'Password must be at least 8 characters.'],
+    maxLength: 100,
+    validate: {
+      validator: function (v) {
+        return /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/.test(v)
+      },
+      message: props => 'Password must include upper/lowercase letters and a number.'
+    }
   },
   isAdmin: {
     type: Boolean,
@@ -34,41 +43,3 @@ const userSchema = new Schema({
 const User = model('User', userSchema)
 
 export default User
-
-// import { model } from 'mongoose'
-
-// const User = model('User', {
-//     walletId: {
-//         type: String,
-//         required: true,
-//         unique: true,
-//         minLength: 1,
-//         maxLength: 200
-//     },
-//     email: {
-//         type: String,
-//         required: true,
-//         unique: true,
-//         minLength: 3,
-//         maxLength: 250
-//     },
-//     password: {
-//         type: String,
-//         required: true,
-//         minLength: 8
-//     },
-//     isActive: {
-//         type: Boolean,
-//         default: true
-//     },
-//     isAdmin: {
-//         type: Boolean,
-//         default: false
-//     },
-//     createdAt: {
-//         type: Date,
-//         default: Date.now
-//     }
-// })
-
-// export default User
