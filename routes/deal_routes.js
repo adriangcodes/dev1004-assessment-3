@@ -5,8 +5,19 @@ import Deal from "../models/deal.js"
 const router = Router()
 router.use(auth)
 
-// Get one deal (authorised user only)
+// Get all incomplete deals (authorised user only)
 router.get('/deals', auth, async (req, res) => {
+    try {
+        // Draft query string returns all deals, otherwise only incomplete deals are shown
+        const deals = await Deal.find(req.query.draft ? {} : { isComplete: false })
+        res.send(deals)
+    } catch(err) {
+        res.status(500).send({ error: err.message })
+    }
+})
+
+// Get one deal (authorised user only)
+router.get('/deals/:id', auth, async (req, res) => {
     // Get the id of the deal
     const deal_id = req.params.deal_id
     // Get the deal with the given id
@@ -18,8 +29,6 @@ router.get('/deals', auth, async (req, res) => {
         res.status(404).send({error: `Deal with id ${deal_id} not found.`})
     }
 })
-
-// Get all deals (authorised user only)
 
 // Create deal (authorised user only)
 router.post('/deals', auth, async (req, res) => {
