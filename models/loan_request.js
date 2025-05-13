@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 
-const loanRequestsSchema = new Schema({
+const loanRequestSchema = new Schema({
     borrower_id: {
         type: Schema.Types.ObjectId,
         ref: 'Users',
@@ -32,6 +32,11 @@ const loanRequestsSchema = new Schema({
     expiry_date: {
         type: Date,
         required: true,
+        default: () => {
+            const date = new Date();
+            date.setDate(date.getDate() + 30); // Default to 30 days from today
+            return date;
+        },
         // Ensure expiry date is after request date
         validate: {
             validator: function (v) {
@@ -41,7 +46,7 @@ const loanRequestsSchema = new Schema({
     }
 });
 
-const LoanRequests = model('LoanRequests', loanRequestsSchema)
+const LoanRequest = model('LoanRequest', loanRequestSchema)
 
 
-export default LoanRequests
+export default LoanRequest

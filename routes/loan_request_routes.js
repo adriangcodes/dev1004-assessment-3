@@ -1,44 +1,56 @@
 import { Router } from "express";
-import jwt from "jsonwebtoken";
 import { auth } from "../auth.js"; // Import the JWT middleware
-
+import LoanRequest from "../models/loan_request.js";
+import Cryptocurrency from "../models/cryptocurrency.js";
+import InterestTerm from "../models/interest_term.js";
 
 const router = Router();
-// Middleware to verify JWT token
-router.use(auth);
 
 // Create a new loan request
 router.post("/loan-request", auth, async (req, res) => {
     
     try {
+        // 1. Check if the user is authenticated
         // JWT middleware adds 'req.auth' containing decoded payload
-        const userId = req.auth?._id;
+        const userId = req.auth?.id;
 
         if (!userId) {
             return res.status(401).json({ error: "Unauthorized: no user ID in token" });
         }
-        
-        return res.status(200).json({ message: "Loan request created successfully" });
 
-
-
-        // 1. Verify token (already handled by router.user(verifyToken))
-        // - req.user is populated by the verifyToken middleware
 
         // 2. Extract loan request details from req.body
-        // const { request_amount, interest_term_id, cryptocurrency_id, expiry_date } = req.body;
+        const { request_amount, loan_term, cryptocurrency_symbol} = req.body;
 
-        // 3. Validate input fields (e.g., required fields, types, value ranges
-        // Optional: manual validation or rely on Mongoose schema validation
+        const cryptoDoc = await Cryptocurrency.findOne({ symbol: cryptocurrency_symbol})
+        if (!cryptoDoc) {
+            return res.status(400).json({ error: `Cryptocurrency ${cryptocurrency_symbol} not found`})
+        }
 
-        // 4. Check if referenced InterestTerm Exists
-        // const interestTerm = await InterestTerm.findById(interest_term_id);
+        const interestTermDoc = await InterestTerm.findOne({loan_length: loan_term})
+        
+        if (!interestTermDoc) {
+            return res.status(400).json({ error: `Loan term of ${loan_term} months not found. Try 1, 3, or 6 months`})
+        }
 
+        const loanRequest = await LoanRequest.create({ 
+            borrower_id: userId,
+            request_amount,
+            interest_term: interestTermDoc._id,
+            cryptocurrency: cryptoDoc._id,
+        });
+        
+        res.status(201).json({ message: "Loan request created successfully", loanRequest });
+    
     }
     catch (error) {
-        console.error("Error creating loan request:", error);
-        return res.status(500).json({ error: "Internal server error" });
+    console.error("Error creating loan request:", error);
+    if (error.name === 'ValidationError') {
+        return res.status(400).json({ error: error.message });
     }
+    return res.status(500).json({ error: "Internal server error" });
+}
+
 })
 
 export default router;
