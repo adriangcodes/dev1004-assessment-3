@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 
-const interestTermsSchema = new Schema({
+const interestTermSchema = new Schema({
     loan_length: { 
         type: Number, 
         required: true,
@@ -23,7 +23,7 @@ const interestTermsSchema = new Schema({
     }
 });
 
-const InterestTerms = model('InterestTerms', interestTermsSchema)
+const InterestTerm = model('InterestTerm', interestTermSchema)
 
 
-export default InterestTerms
+export default InterestTerm

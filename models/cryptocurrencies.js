@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 
-const cryptocurrenciesSchema = new Schema({
+const cryptocurrencySchema = new Schema({
     symbol: {
         type: String,
         required: [true, 'Symbol is required'],
@@ -17,7 +17,7 @@ const cryptocurrenciesSchema = new Schema({
     }
 });
 
-const Cryptocurrencies = model('Cryptocurrencies', cryptocurrenciesSchema)
+const Cryptocurrency = model('Cryptocurrency', cryptocurrencySchema)
 
 
-export default Cryptocurrencies
+export default Cryptocurrency
