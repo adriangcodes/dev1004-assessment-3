@@ -9,13 +9,13 @@ const users = [
     {
         walletId: '12345678ABCD',
         email: 'admin@example.com',
-        password: 'password123',
+        password: 'Password123',
         isAdmin: true
     },
     {
         walletId: 'ABCD87654321',
         email: 'hodl@satoshi.com',
-        password: 'password'
+        password: '1Password'
     },
 ]
 
