@@ -56,8 +56,36 @@ router.post('/deals', auth, async (req, res) => {
     }
  })
 
-// Update deal (authorised user only)
+// Update deal (admin only)
+async function update(req, res) {
+    try {
+        const deal = await Deal.findById(req.params.id)
+        if (!deal) {
+            return res.status(404).send({ error: `Deal with id ${req.params.id} not found.` })
+        }
+        const updateDeal = await Deal.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' })
+        res.status(200).send(updateDeal)
+    } catch (err) {
+        res.status(400).send({ error: err.message })
+    }
+}
+
+router.put('/deals/:id', auth, adminOnly, update)
+router.patch('/deals/:id', auth, adminOnly, update)
 
 // Delete deal (admin only)
+router.delete('/deals/:id', auth, adminOnly, async (req, res) => {
+    try {
+        const dealId = req.params.id
+        const deal = await Deal.findByIdAndDelete(dealId)
+        if (deal) {
+            res.status(200).send({ message: 'Deal deleted successfully.' })
+        } else {
+            res.status(404).send({ error: `Deal with id ${dealId} not found.` })
+        }
+    } catch (err) {
+        res.status(400).send({ error: err.message })
+    }
+})
 
 export default router
