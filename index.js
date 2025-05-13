@@ -2,9 +2,11 @@ import 'dotenv/config' // Load environment variables from .env file
 import express from 'express'
 import helmet from 'helmet'
 import cors from 'cors'
+
 import { connect } from './db.js'
 import user_routes from './routes/user_routes.js'
 import loan_request_routes from './routes/loan_request_routes.js'
+import deal_routes from './routes/deal_routes.js'
 
 // console.log(process.env) // Check if environment variables are loaded correctly
 
@@ -18,7 +20,8 @@ app.use(express.json());
 
 // Routes
 app.use(user_routes)
-app.use(loan_request_routes);
+app.use(loan_request_routes)
+app.use(deal_routes)
 
 // Error handling middleware
 app.use((err, req, res, next) => {
