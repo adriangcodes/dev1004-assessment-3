@@ -1,8 +1,13 @@
 import { Schema, model } from 'mongoose'
+import User from './user.js'
 import LoanRequest from './loan_request.js'
 
 const dealSchema = new Schema({
   lender_id: {
+    type: Schema.Types.ObjectId,
+    ref: User
+  },
+  loan_details: {
     type: Schema.Types.ObjectId,
     ref: LoanRequest
   },
