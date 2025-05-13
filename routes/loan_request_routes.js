@@ -3,6 +3,7 @@ import { auth } from "../auth.js"; // Import the JWT middleware
 import LoanRequest from "../models/loan_request.js";
 import Cryptocurrency from "../models/cryptocurrency.js";
 import InterestTerm from "../models/interest_term.js";
+import User from "../models/user.js";
 
 const router = Router();
 
@@ -91,15 +92,36 @@ router.get('/loan-request/:id', auth, async (req, res) => {
 // Fund a new loan
 router.post('/fund-loan', auth, async (req, res) => {
     try {
+        console.log('req.auth:', req.auth);
+        console.log('req.user:', req.user);
+
+        const funderId = req.auth.id; // Get the funder ID from the authenticated user
+       
         //  Extract loan request details from req.body
         const { loan_request_id, funding_amount } = req.body;
 
         // Find the loan request by ID
         const loanRequest = await LoanRequest.findById(loan_request_id);
-
         if (!loanRequest) {
             return res.status(404).json({ error: "Loan request not found" });
         }
+
+        // Get funder user
+        const funder = await User.findById(funderId);
+        if (!funder) {
+            return res.status(404).json({ error: "Funder not found" });
+        }
+
+        const cryptoSymbol = loanRequest.cryptocurrency.symbol;
+        const currentBalance = funder.wallet?.[cryptoSymbol] ?? 0;
+
+        if (currentBalance < funding_amount) {
+            return res.status(400).json({ error: `Insufficient balance in ${cryptoSymbol} wallet` });
+        }
+
+        // Deduct the funding amount from the funder's wallet
+        funder.wallet[cryptoSymbol] -= funding_amount;
+        await funder.save();
 
         // Update the loan request with the funding amount
         loanRequest.funding_amount = funding_amount;
