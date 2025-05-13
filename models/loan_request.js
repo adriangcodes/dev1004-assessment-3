@@ -3,7 +3,7 @@ import { model, Schema } from "mongoose";
 const loanRequestSchema = new Schema({
     borrower_id: {
         type: Schema.Types.ObjectId,
-        ref: 'Users',
+        ref: 'User',
         required: true
     },
     request_amount: {
@@ -13,12 +13,12 @@ const loanRequestSchema = new Schema({
     },
     interest_term: {
         type: Schema.Types.ObjectId,
-        ref: 'InterestTerms',
+        ref: 'InterestTerm',
         required: true
     },
     cryptocurrency: {
         type: Schema.Types.ObjectId,
-        ref: 'Cryptocurrencies',
+        ref: 'Cryptocurrency',
         required: true
     },
     request_date: {

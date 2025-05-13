@@ -45,9 +45,51 @@ router.post("/loan-request", auth, async (req, res) => {
     }
 })
 
+// Get all loan requests
+router.get('/loan-request', auth, async (req, res) => {
+    try {
+        // Get all loan requests from the database
+        const loanRequests = await LoanRequest
+        .find()
+        .select('-__v')
+        .populate('borrower_id', 'name email') // Populate borrower details
+        .populate('interest_term', 'loan_length interest_rate') // Populate interest term details
+        .populate('cryptocurrency', 'symbol name') // Populate cryptocurrency details
+        res.send(loanRequests);
+    } catch (error) {
+        console.error("Error fetching loan requests:", error);
+        res.status(500).send({ error: "Internal server error" });
+    }
+})
 
+// Get a specific loan request by ID
+router.get('/loan-request/:id', auth, async (req, res) => {
+    try {
+        // Get the loan request ID from the request parameters
+        const loanRequestId = req.params.id;
+
+        // Find the loan request by ID and populate necessary fields
+        const loanRequest = await LoanRequest
+            .findById(loanRequestId)
+            .select('-__v')
+            .populate('borrower_id', 'name email') // Populate borrower details
+            .populate('interest_term', 'loan_length interest_rate') // Populate interest term details
+            .populate('cryptocurrency', 'symbol name'); // Populate cryptocurrency details
+
+        if (!loanRequest) {
+            return res.status(404).json({ error: "Loan request not found" });
+        }
+
+        res.status(200).json(loanRequest);
+
+    } catch (error) {
+        console.error("Error fetching loan request:", error);
+        res.status(500).send({ error: "Internal server error" });
+    }
+})
+
+// Fund a new loan
 router.post('/fund-loan', auth, async (req, res) => {
-    
     try {
         //  Extract loan request details from req.body
         const { loan_request_id, funding_amount } = req.body;
