@@ -43,6 +43,12 @@ const loanRequestSchema = new Schema({
                 return v > this.request_date;
             }
         }
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'expired', 'funded'],
+        default: 'active',
+        required: true
     }
 });
 

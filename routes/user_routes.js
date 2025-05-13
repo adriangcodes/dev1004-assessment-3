@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 import User from '../models/user.js'
+import { auth } from '../auth.js'
 
 const secret = process.env.JWT_SECRET
 const router = Router()
@@ -40,7 +41,7 @@ router.post('/login', async (req, res) => {
             if (match) {
                 // Generate a JWT and send it to the client
                 const token = jwt.sign({
-                    id: user._id,
+                    id: user._id.toString(),
                     email: user.email,
                     exp: Math.floor(Date.now() / 1000) + (60 * 120) // 2 hour window
                 }, secret)
@@ -55,6 +56,23 @@ router.post('/login', async (req, res) => {
     catch(err) {
         // TODO: Log to error file
         res.status(400).send({ error: err.message })
+    }
+})
+
+// Get wallet balance
+router.get('/wallet', auth, async (req, res) => {
+    try {
+        // Get the user ID from the JWT token
+        const userId = req.auth.id
+        // Find the user by ID and select the wallet field
+        const user = await User.findById(userId).select('wallet')
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' })
+        }
+        // Send the user's wallet balance
+        res.send(user.wallet)
+    } catch (err) {
+        res.send({ error: err.message })
     }
 })
 
