@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt'
 import db from './db.js'
 import User from './models/user.js'
 
@@ -9,13 +10,13 @@ const users = [
     {
         walletId: '12345678ABCD',
         email: 'admin@example.com',
-        password: 'Password123',
+        password: await bcrypt.hash('Password123', 10),
         isAdmin: true
     },
     {
         walletId: 'ABCD87654321',
         email: 'hodl@satoshi.com',
-        password: '1Password'
+        password: await bcrypt.hash('1Password', 10)
     },
 ]
 
