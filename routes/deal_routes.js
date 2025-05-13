@@ -1,6 +1,6 @@
 import { Router } from "express";   
 import { auth, adminOnly } from "../auth.js";
-import Deal from "./models/deals.js"
+import Deal from "../models/deal.js"
 
 const router = Router()
 router.use(auth)

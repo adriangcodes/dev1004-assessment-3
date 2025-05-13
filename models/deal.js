@@ -1,11 +1,10 @@
 import { Schema, model } from 'mongoose'
-import LoanRequests from './loan_requests'
+import LoanRequest from './loan_request.js'
 
-// TODO: Update LoanRequests when pluralisation is corrected
 const dealSchema = new Schema({
   lender_id: {
     type: Schema.Types.ObjectId,
-    ref: LoanRequests
+    ref: LoanRequest
   },
   isComplete: {
     type: Boolean,
