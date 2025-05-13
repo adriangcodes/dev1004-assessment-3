@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt'
 import db from './db.js'
 import User from './models/user.js'
 import Cryptocurrency from './models/cryptocurrency.js'
+import InterestTerm from './models/interest_term.js'
 
 // Connect to DB
 db.connect()
@@ -78,6 +79,29 @@ console.log('Cryptocurrencies erased.')
 // Creates and saves the cryptocurrencies to MongoDB
 const c = await Cryptocurrency.create(cryptocurrencies)
 console.log('Cryptocurrencies created.')
+
+
+// Interest Term seed data
+const interestTerm = [
+    {
+        loan_length: 1,
+        interest_rate: 5.9
+    },
+    {
+        loan_length: 3,
+        interest_rate: 5.7
+    },
+    {
+        loan_length: 6,
+        interest_rate: 5.9
+    }
+]
+
+await InterestTerm.deleteMany()
+console.log('Interest terms erased.')
+// Creates and saves the interest terms to MongoDB
+const i = await InterestTerm.create(interestTerm)
+console.log('Interest terms created.')
 
 // Disconnect from DB
 db.disconnect()
