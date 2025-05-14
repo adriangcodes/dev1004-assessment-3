@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { adminOnly, auth } from '../auth.js';
 import Collateral from '../models/collateral.js';
 import User from '../models/user.js';
-import LoanRequest from '../models/loan_request.js';
 import Deal from '../models/deal.js';
 
 const router = Router();
@@ -89,7 +88,7 @@ router.get('/collateral', auth, async (req, res) => {
 
 
 // ADMIN Route for getting all collateral
-router.get('/admin-collateral', auth, adminOnly, async (req, res) => {
+router.get('/admin/collateral', auth, adminOnly, async (req, res) => {
     try {
         const collateral = await Collateral.find()
             .select('-__v')
@@ -115,7 +114,7 @@ router.get('/admin-collateral', auth, adminOnly, async (req, res) => {
 })
 
 // ADMIN Route Get collateral by ID
-router.get('/admin-collateral/:id', auth, adminOnly, async (req, res) => {
+router.get('/admin/collateral/:id', auth, adminOnly, async (req, res) => {
     try {
         const { id } = req.params
           const collateral = await Collateral.findById(id)
