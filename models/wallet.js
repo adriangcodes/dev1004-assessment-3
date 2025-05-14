@@ -17,6 +17,7 @@ const walletSchema = new Schema({
         // Max limit set based on initial operation of Bitcoin only
         max: [21000000, 'Amount cannot exceed 21 million.'],
         validate: {
+        // Validates amount entry to ensure it has a maximum of 8 decimal places, and that a numeral features before the decimal place (ie. 0.5 not .5)
         validator: function (v) {
             return /^\d+(\.\d{1,8})?$/.test(v.toString())
         },
