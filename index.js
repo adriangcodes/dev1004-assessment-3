@@ -7,6 +7,7 @@ import { connect } from './db.js'
 import user_routes from './routes/user_routes.js'
 import loan_request_routes from './routes/loan_request_routes.js'
 import deal_routes from './routes/deal_routes.js'
+import collateral_routes from './routes/collateral_routes.js'
 
 // console.log(process.env) // Check if environment variables are loaded correctly
 
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use(user_routes)
 app.use(loan_request_routes)
 app.use(deal_routes)
+app.use(collateral_routes)
 
 // Error handling middleware
 app.use((err, req, res, next) => {
