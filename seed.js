@@ -6,6 +6,7 @@ import InterestTerm from './models/interest_term.js'
 import LoanRequest from './models/loan_request.js'
 import e, { request } from 'express'
 import Deal from './models/deal.js'
+import Collateral from './models/collateral.js'
 
 // Connect to DB
 db.connect()
@@ -105,6 +106,21 @@ console.log('Deals have been erased')
 const d = await Deal.create(deals);
 console.log('Deals have been created')
 
+
+// Collateral seed data
+const collateral = [
+    {
+        deal_id: d[0]._id,
+        amount: 0.5,
+        status: 'pending',
+        date_created: Date.now()
+    }
+]
+
+await Collateral.deleteMany()
+console.log('Collateral has been erased')
+const col = await Collateral.create(collateral);
+console.log('Collateral has been created')
 
 // Disconnect from DB
 db.disconnect()

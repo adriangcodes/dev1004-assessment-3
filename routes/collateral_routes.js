@@ -55,32 +55,6 @@ router.post('/collateral', auth, async (req, res) => {
     }
 })
 
-// ADMIN Route for getting all collateral
-router.get('/admin-collateral', auth, adminOnly, async (req, res) => {
-    try {
-        const collateral = await Collateral.find()
-            .select('-__v')
-            .populate({
-                path: 'deal_id',
-                select: 'lenderId loanDetails isComplete createdAt',
-                populate: {
-                    path: 'loanDetails',
-                    model: 'LoanRequest',
-                    select: 'request_amount borrower_id',
-                    populate: {
-                        path: 'borrower_id',
-                        model: 'User',
-                        select: 'walletId'
-                    }
-                }
-            })
-
-        res.send(collateral)
-    } catch (err) {
-        res.status(500).send({ error: err.message })
-    }
-})
-
 // Get all user's collateral
 router.get('/collateral', auth, async (req, res) => {
     try {
@@ -112,5 +86,63 @@ router.get('/collateral', auth, async (req, res) => {
         res.status(500).send({ error: err.message })
     }
 })
+
+
+// ADMIN Route for getting all collateral
+router.get('/admin-collateral', auth, adminOnly, async (req, res) => {
+    try {
+        const collateral = await Collateral.find()
+            .select('-__v')
+            .populate({
+                path: 'deal_id',
+                select: 'lenderId loanDetails isComplete createdAt',
+                populate: {
+                    path: 'loanDetails',
+                    model: 'LoanRequest',
+                    select: 'request_amount borrower_id',
+                    populate: {
+                        path: 'borrower_id',
+                        model: 'User',
+                        select: 'walletId'
+                    }
+                }
+            })
+
+        res.send(collateral)
+    } catch (err) {
+        res.status(500).send({ error: err.message })
+    }
+})
+
+// ADMIN Route Get collateral by ID
+router.get('/admin-collateral/:id', auth, adminOnly, async (req, res) => {
+    try {
+        const { id } = req.params
+          const collateral = await Collateral.findById(id)
+            .select('-__v')
+            .populate({
+                path: 'deal_id',
+                select: '-__v',
+                populate: {
+                    path: 'loanDetails',
+                    model: 'LoanRequest',
+                    select: 'request_amount borrower_id',
+                    populate: {
+                        path: 'borrower_id',
+                        model: 'User',
+                        select: 'walletId email'
+                    }
+                }
+            });
+        
+        if (!collateral) {
+            return res.status(404).send({ error: 'Collateral not found' });
+        }
+
+        res.send(collateral)
+    } catch (err) {
+        res.status(500).send({ error: err.message })
+    }
+});
 
 export default router;
