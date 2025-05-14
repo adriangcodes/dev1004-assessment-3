@@ -3,6 +3,7 @@ import db from './db.js'
 import User from './models/user.js'
 import Cryptocurrency from './models/cryptocurrency.js'
 import InterestTerm from './models/interest_term.js'
+import LoanRequest from './models/loan_request.js'
 
 // Connect to DB
 db.connect()
@@ -13,12 +14,24 @@ const users = [
         walletId: '12345678ABCD',
         email: 'admin@example.com',
         password: await bcrypt.hash('Password123', 10),
-        isAdmin: true
+        isAdmin: true,
+        wallet: {
+            BTC: 3.5,
+            ETH: 10,
+            LTC: 5,
+            XRP: 1000
+        }
     },
     {
         walletId: 'ABCD87654321',
         email: 'hodl@satoshi.com',
-        password: await bcrypt.hash('1Password', 10)
+        password: await bcrypt.hash('1Password', 10),
+        wallet: {
+            BTC: 0.5,
+            ETH: 2,
+            LTC: 1,
+            XRP: 500
+        }
     },
 ]
 
@@ -102,6 +115,9 @@ console.log('Interest terms erased.')
 // Creates and saves the interest terms to MongoDB
 const i = await InterestTerm.create(interestTerm)
 console.log('Interest terms created.')
+
+await LoanRequest.deleteMany()
+console.log('Loan Requests have been erased')
 
 // Disconnect from DB
 db.disconnect()
