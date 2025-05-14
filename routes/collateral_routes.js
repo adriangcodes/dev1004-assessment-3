@@ -7,7 +7,7 @@ import Deal from '../models/deal.js';
 
 const router = Router();
 
-// Create a new collateral
+// Create a new collateral entry
 // Trying to post the collateral to the deal when the deal is created
 router.post('/collateral', auth, async (req, res) => {
     try {
@@ -72,14 +72,42 @@ router.get('/admin-collateral', auth, adminOnly, async (req, res) => {
                         model: 'User',
                         select: 'walletId'
                     }
-                    
-                    
                 }
-                
             })
-        
 
         res.send(collateral)
+    } catch (err) {
+        res.status(500).send({ error: err.message })
+    }
+})
+
+// Get all user's collateral
+router.get('/collateral', auth, async (req, res) => {
+    try {
+        // Get the user ID from the JWT token
+        const userId = req.auth.id
+        
+        const userCollateral = await Collateral.find()
+            .populate({
+                path: 'deal_id',
+                populate: {
+                    path: 'loanDetails',
+                    model: 'LoanRequest',
+                    select: 'borrower_id request_amount',
+                    populate: {
+                        path: 'borrower_id',
+                        model: 'User',
+                        select: '_id walletId',
+                    }    
+                }
+            })
+        
+        // Filter only collateral where the borrower_id matched the authenticated user
+        const filtered = userCollateral.filter(collateral =>
+            collateral.deal_id?.loanDetails?.borrower_id?._id.toString() === userId
+        );
+
+        res.send(filtered)
     } catch (err) {
         res.status(500).send({ error: err.message })
     }
