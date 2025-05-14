@@ -4,7 +4,7 @@ import User from './models/user.js'
 import Cryptocurrency from './models/cryptocurrency.js'
 import InterestTerm from './models/interest_term.js'
 import LoanRequest from './models/loan_request.js'
-import e, { request } from 'express'
+import Wallet from './models/wallet.js'
 import Deal from './models/deal.js'
 import Collateral from './models/collateral.js'
 
@@ -52,7 +52,6 @@ console.log('Cryptocurrencies erased.')
 // Creates and saves the cryptocurrencies to MongoDB
 const c = await Cryptocurrency.create(cryptocurrencies)
 console.log('Cryptocurrencies created.')
-
 
 // Interest Term seed data
 const interestTerm = [
@@ -121,6 +120,10 @@ await Collateral.deleteMany()
 console.log('Collateral has been erased')
 const col = await Collateral.create(collateral);
 console.log('Collateral has been created')
+
+// Wallet seed data
+await Wallet.deleteMany()
+console.log('Wallets have been erased')
 
 // Disconnect from DB
 db.disconnect()
