@@ -47,7 +47,7 @@ const loanRequestSchema = new Schema({
     status: {
         type: String,
         enum: ['pending', 'expired', 'funded'],
-        default: 'active',
+        default: 'pending',
         required: true
     }
 });

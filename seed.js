@@ -4,6 +4,9 @@ import User from './models/user.js'
 import Cryptocurrency from './models/cryptocurrency.js'
 import InterestTerm from './models/interest_term.js'
 import LoanRequest from './models/loan_request.js'
+import e, { request } from 'express'
+import Deal from './models/deal.js'
+import Collateral from './models/collateral.js'
 
 // Connect to DB
 db.connect()
@@ -73,8 +76,51 @@ console.log('Interest terms erased.')
 const i = await InterestTerm.create(interestTerm)
 console.log('Interest terms created.')
 
+// Loan Request seed data
+const loanRequest = [
+    {
+        borrower_id: u[0]._id,
+        request_amount: 0.5,
+        interest_term: i[1]._id,
+        cryptocurrency: c[0]._id,
+        request_date: Date.now(),
+        expiry_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+    }
+]
+
 await LoanRequest.deleteMany()
 console.log('Loan Requests have been erased')
+const lr = await LoanRequest.create(loanRequest);
+console.log('Loan Requests have been created')
+
+const deals = [
+    {
+        lenderId: u[1]._id,
+        loanDetails: lr[0]._id,
+        isComplete: false
+    }
+]
+
+await Deal.deleteMany()
+console.log('Deals have been erased')
+const d = await Deal.create(deals);
+console.log('Deals have been created')
+
+
+// Collateral seed data
+const collateral = [
+    {
+        deal_id: d[0]._id,
+        amount: 0.5,
+        status: 'pending',
+        date_created: Date.now()
+    }
+]
+
+await Collateral.deleteMany()
+console.log('Collateral has been erased')
+const col = await Collateral.create(collateral);
+console.log('Collateral has been created')
 
 // Disconnect from DB
 db.disconnect()
