@@ -144,4 +144,25 @@ router.get('/admin/collateral/:id', auth, adminOnly, async (req, res) => {
     }
 });
 
+//ADMIN Routes and function for updating collateral status
+async function update(req, res) {
+    try {
+        // Find collateral by id
+        const collateral = await Collateral.findById(req.params.id)
+        if (!collateral) {
+            return res.status(404).send({ error: `Collateral with id ${collateral} not found`})
+        }
+
+        const updatedCollateral = await Collateral.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' })
+
+        res.send(updatedCollateral)
+
+    } catch (err) {
+        res.status(400).send({ error: err.message})
+    }
+}
+
+router.put('/admin/collateral/:id', auth, adminOnly, update);
+router.patch('/admin/collateral/:id', auth, adminOnly, update);
+
 export default router;
