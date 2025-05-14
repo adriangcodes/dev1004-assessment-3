@@ -16,10 +16,7 @@ const users = [
         password: await bcrypt.hash('Password123', 10),
         isAdmin: true,
         wallet: {
-            BTC: 3.5,
-            ETH: 10,
-            LTC: 5,
-            XRP: 1000
+            BTC: 3.5
         }
     },
     {
@@ -27,10 +24,7 @@ const users = [
         email: 'hodl@satoshi.com',
         password: await bcrypt.hash('1Password', 10),
         wallet: {
-            BTC: 0.5,
-            ETH: 2,
-            LTC: 1,
-            XRP: 500
+            BTC: 0.5
         }
     },
 ]
@@ -48,43 +42,8 @@ const cryptocurrencies = [
     {
         symbol: 'BTC',
         name: 'Bitcoin'
-    },
-    {
-        symbol: 'ETH',
-        name: 'Ethereum'
-    },
-    {
-        symbol: 'LTC',
-        name: 'Litecoin'
-    },
-    {
-        symbol: 'XRP',
-        name: 'Ripple'
-    },
-    {
-        symbol: 'DOGE',
-        name: 'Dogecoin'
-    },
-    {
-        symbol: 'SOL',
-        name: 'Solana'
-    },
-    {
-        symbol: 'BNB',
-        name: 'Binance Coin'
-    },
-    {
-        symbol: 'ADA',
-        name: 'Cardano'
-    },
-    {
-        symbol: 'DOT',
-        name: 'Polkadot'
-    },
-    {
-        symbol: 'MATIC',
-        name: 'Polygon'
     }
+    // Will look at adding other cryptocurrencies in the future
 ]
 
 await Cryptocurrency.deleteMany()
