@@ -37,17 +37,6 @@ const userSchema = new Schema({
   isActive: {
     type: Boolean,
     default: true
-  },
-  // Needed to add a field for the user's wallet balance so when we fund a loan we can check if the user has enough balance
-  // The way to add a wallet balance in seed is as follows:
-  // wallet: {
-  //     BTC: 3.5,
-  //     ETH: 10
-  // }
-  wallet : {
-    type: Map,
-    of: Number,
-    default: {}
   }
 }, { timestamps: true })
 
