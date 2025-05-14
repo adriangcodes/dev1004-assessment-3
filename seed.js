@@ -12,23 +12,21 @@ db.connect()
 const users = [
     {
         walletId: '12345678ABCD',
-        email: 'admin@example.com',
+        email: 'admin@app.com',
         password: await bcrypt.hash('Password123', 10),
-        isAdmin: true,
-        wallet: {
-            BTC: 3.5
-        }
+        isAdmin: true
     },
     {
         walletId: 'ABCD87654321',
         email: 'hodl@satoshi.com',
-        password: await bcrypt.hash('1Password', 10),
-        wallet: {
-            BTC: 0.5
-        }
+        password: await bcrypt.hash('1Password', 10)
     },
+    {
+        walletId: '1122334455AB',
+        email: 'degen@daytrade.com',
+        password: await bcrypt.hash('2thamoon!', 10)
+    }
 ]
-
 
 // Erase any existing Users
 await User.deleteMany()
