@@ -165,4 +165,32 @@ async function update(req, res) {
 router.put('/admin/collateral/:id', auth, adminOnly, update);
 router.patch('/admin/collateral/:id', auth, adminOnly, update);
 
+// ADMIN Route - Release or Refund Collateral after deal completion
+router.post('/admin/collateral/:id/release', auth, adminOnly, async (req, res) => {
+    try {
+        // Find collateral with id in req.params.id
+        const collateralId = req.params.id
+        const collateral = await Collateral.findById(collateralId)
+
+        // If doesn't exist, let user know that the collateral doesn't exist
+        if (!collateral) {
+            res.status(404).send({ error: `Collateral with id ${collateral} not found`})
+        }
+    
+        // Get the collateral amount in the collateral save to a variable
+        const collateralAmount = collateral.amount
+
+        // Get the user/borrower that the collateral belongs to and 
+        // return the collateral to the user (credit their wallet)
+        
+        // 
+        // Change the status of collateral to 'released'
+        // Get the deal '_id' of the deal
+        // Change the isComplete boolean of the deal to true
+
+    } catch (err) {
+        res.status(400).send({ error: err.message})
+    }
+})
+
 export default router;
