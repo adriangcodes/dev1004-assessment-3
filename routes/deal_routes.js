@@ -44,6 +44,7 @@ router.post('/deals', auth, async (req, res) => {
         }
         // Validate loanDetails exists
         const loanRequestExists = await LoanRequest.findById(bodyData.loanDetails)
+        
         if (!loanRequestExists) {
             return res.status(400).send({ error: 'Loan request not found.' })
         }
