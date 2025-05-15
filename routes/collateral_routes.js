@@ -30,17 +30,15 @@ router.post('/collateral', auth, async (req, res) => {
         }
 
         // Check if the borrower has enough funds to cover the collateral
-        const borrower = await User.findById(borrowerId);
-        const cryptoSymbol = "BTC"
-        const walletBalance = borrower.wallet?.get(cryptoSymbol) ?? 0;
-        
+        const wallet = await Wallet.findOne({ userId: borrowerId})
+        const walletBalance = wallet.balance
         if (walletBalance < amount) {
-            return res.status(400).send({ error: `Insufficient balance in ${cryptoSymbol} wallet` });
+            return res.status(400).send({error: `Insufficient balance`})
         }
 
         // Deduct collateral from wallet
-        borrower.wallet.set(cryptoSymbol, walletBalance - amount);
-        await borrower.save();
+        wallet.balance -= amount
+        await wallet.save()
         
         // Create collateral record
         const collateral = new Collateral({
@@ -86,6 +84,39 @@ router.get('/collateral', auth, async (req, res) => {
         res.send(filtered)
     } catch (err) {
         res.status(500).send({ error: err.message })
+    }
+})
+
+// Get a User's Posted Collateral by ID
+router.get('/collateral/:id', auth, async (req, res) => {
+    try {
+        // Get users ID from req.auth.id
+        const { id } = req.params;
+        const collateral = await Collateral.findById(id).populate({
+            path: 'deal_id',
+            populate: {
+                path: 'loanDetails',
+                model: 'LoanRequest',
+                populate: {
+                    path: 'borrower_id',
+                    model: 'User'
+                }
+            }
+        });
+
+        if (!collateral) {
+            res.status(404).send({error: "No collateral found with that ID"})
+        } 
+
+        // Restrict access to the borrower only
+        if (collateral.deal_id.loanDetails.borrower_id._id.toString() !== req.auth.id) {
+            return res.status(403).send({error: "Unauthorised access to this collateral"})
+        }
+
+        res.send(collateral)
+        
+    } catch (err) {
+        res.status(400).send({ error: err.message})
     }
 })
 
