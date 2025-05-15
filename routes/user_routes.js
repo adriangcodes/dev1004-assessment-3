@@ -80,7 +80,6 @@ router.get('/wallet', auth, async (req, res) => {
 router.get('/users', auth, adminOnly, async (req, res) => {
     try {
         const users = await User.find()
-
         if (!users) {
             return res.status(404).send({ error: "No Users Found"})
         }

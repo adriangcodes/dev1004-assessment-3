@@ -32,20 +32,26 @@ dealSchema.pre('save', async function (next) {
 
   try {
     // Populate loanDetails to access loan term and creation date
-    await this.populate('loanDetails')
+    await this.populate({
+      path: 'loanDetails',
+      populate: {
+        path: 'interest_term',
+        model: 'InterestTerm'
+      }
+    })
 
     const loanDetails = this.loanDetails
-    if (!loanDetails) {
+    if (!loanDetails || !loanDetails.interest_term) {
       return next(new Error('Loan details not found'))
     }
 
     // loan_length is in months on LoanRequest model
-    const loanTerm = loanDetails.loan_length || 0
+    const loanTermMonths = loanDetails.interest_term.loan_length
     const creationDate = loanDetails.createdAt || new Date()
 
     // Calculate expectedCompletionDate by adding loanTerm months to creationDate
     const expectedDate = new Date(creationDate)
-    expectedDate.setMonth(expectedDate.getMonth() + loanTerm)
+    expectedDate.setMonth(expectedDate.getMonth() + loanTermMonths)
 
     this.expectedCompletionDate = expectedDate
 
