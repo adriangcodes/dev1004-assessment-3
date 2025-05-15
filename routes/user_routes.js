@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 import User from '../models/user.js'
-import { auth } from '../auth.js'
+import { adminOnly, auth } from '../auth.js'
 
 const secret = process.env.JWT_SECRET
 const router = Router()
@@ -73,6 +73,23 @@ router.get('/wallet', auth, async (req, res) => {
         res.send(user.wallet)
     } catch (err) {
         res.send({ error: err.message })
+    }
+})
+
+// ADMIN Route - Get All Users
+router.get('/users', auth, adminOnly, async (req, res) => {
+    try {
+        const users = await User.find()
+
+        if (!users) {
+            return res.status(404).send({ error: "No Users Found"})
+        }
+
+        res.send(users)
+
+    } catch (err) {
+
+        res.status(500).send({ error: err.message })
     }
 })
 
