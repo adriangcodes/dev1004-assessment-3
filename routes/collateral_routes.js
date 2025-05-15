@@ -3,6 +3,7 @@ import { adminOnly, auth } from '../auth.js';
 import Collateral from '../models/collateral.js';
 import User from '../models/user.js';
 import Deal from '../models/deal.js';
+import LoanRequest from '../models/loan_request.js';
 
 const router = Router();
 
@@ -176,13 +177,40 @@ router.post('/admin/collateral/:id/release', auth, adminOnly, async (req, res) =
         if (!collateral) {
             res.status(404).send({ error: `Collateral with id ${collateral} not found`})
         }
-    
+        
+        
         // Get the collateral amount in the collateral save to a variable
         const collateralAmount = collateral.amount
 
         // Get the user/borrower that the collateral belongs to and 
         // return the collateral to the user (credit their wallet)
-        
+
+        // Find related Deal
+        const deal = await Deal.findById(collateral.deal_id)
+        if (!deal) {
+            res.status(404).send({error: "Deal not found for the collateral"})
+        }
+
+        // Find related LoanRequest
+        const loanRequest = await LoanRequest.findById(deal.loanDetails);
+        if (!loanRequest) {
+            res.status(404).send({error: "Loan Request not found for this deal"})
+        }
+
+        // Find the borrower (user who created the loan request)
+        const borrower = await User.findById(loanRequest.borrower_id)
+        if (!borrower) {
+            res.status(404).send({error: "Borrower not found to return collateral to"})
+        };
+
+        // Credit the collateral amount to the user's wallet
+        const wallet = await Wallet.findOne({ })
+
+        const d = await Deal.findById(dealId)
+        const ld = await Deal.findById(collateral.deal_id)
+        const loanId = ld.loanDetails
+        const loanDetails = await LoanRequest.findById(ld.loanId)
+        res.send(loanDetails)
         // 
         // Change the status of collateral to 'released'
         // Get the deal '_id' of the deal
