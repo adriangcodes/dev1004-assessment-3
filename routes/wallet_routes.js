@@ -21,12 +21,13 @@ router.get('/wallets', auth, adminOnly, async (req, res) => {
 
 // Get all wallet from a single user (authorised user only)
 router.get('/wallets/:id', auth, async (req, res) => {
+    const walletId = req.params.id
     // Fetch the wallet with the given id
     try {
-        const wallet = await Wallet.findById(req.params.id)
+        const wallet = await Wallet.findById(walletId)
     // Check the wallet exists, if not return error message
     if (!wallet) {
-        return res.status(404).send({ error: `Wallet with id ${req.params.id} not found.` })
+        return res.status(404).send({ error: `Wallet with id ${walletId} not found.` })
     }
     // Check the user is accessing their own wallet data, if not return error message
     if (wallet.userId.toString() !== req.user._id.toString()) {
@@ -60,18 +61,19 @@ router.post('/wallets', auth, async (req, res) => {
 // Update wallet (authorised user only)
 async function update(req, res) {
     try {
+        const walletId = req.params.id
         // Find wallet by id
-        const wallet = await Wallet.findById(req.params.id)
+        const wallet = await Wallet.findById(walletId)
         // Return error if id does not exist
         if (!wallet) {
-            return res.status(404).send({ error: `Wallet with id ${req.params.id} not found.` })
+            return res.status(404).send({ error: `Wallet with id ${walletId} not found.` })
         }
         // Check the user is updating their own wallet
         if (wallet.userId.toString() !== req.user._id.toString()) {
             return res.status(403).send({ error: 'Access denied: you do not have permission to update this wallet.' })
         }
         // Perform the update
-        const updatedWallet = await Wallet.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' })
+        const updatedWallet = await Wallet.findByIdAndUpdate(walletId, req.body, { returnDocument: 'after' })
         // Send response to client
         res.status(200).send(updatedWallet)
     } catch (err) {
