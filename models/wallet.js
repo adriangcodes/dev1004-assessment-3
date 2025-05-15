@@ -11,7 +11,7 @@ const walletSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: Cryptocurrency
     },
-    amount: {
+    balance: {
         type: Number,
         min: [0, 'Wallet cannot have a negative amount of coins.'],
         // Max limit set based on initial operation of Bitcoin only

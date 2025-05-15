@@ -14,7 +14,6 @@ db.connect()
 // User seed data
 const users = [
     {
-        // walletId: '12345678ABCD',
         email: 'admin@app.com',
         password: await bcrypt.hash('Password123', 10),
         isAdmin: true
@@ -129,17 +128,17 @@ const wallet = [
     {
         userId: u[0]._id,
         cryptoType: c[0]._id,
-        amount: 20.2
+        balance: 20.2
     },
     {
         userId: u[1]._id,
         cryptoType: c[0]._id,
-        amount: 8.81769123
+        balance: 8.81769123
     },
     {
         userId: u[2]._id,
         cryptoType: c[0]._id,
-        amount: 2.51242
+        balance: 2.51242
     }
 ]
 await Wallet.deleteMany()

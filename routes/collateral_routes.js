@@ -210,11 +210,23 @@ router.post('/admin/collateral/:id/release', auth, adminOnly, async (req, res) =
             res.status(404).send({error: "Wallet not found for the borrower"})
         }
 
-        res.send(wallet)
-        // 
-        // Change the status of collateral to 'released'
-        // Get the deal '_id' of the deal
-        // Change the isComplete boolean of the deal to true
+        wallet.balance += collateralAmount
+        await wallet.save()
+
+        // Update the collateral and deal
+        collateral.status = "released"
+        await collateral.save()
+
+        deal.isComplete = true
+        await deal.save()
+
+        res.send({
+            message: 'Collateral released and credited to borrow successfully',
+            borrower: borrower.email,
+            walletBalance: wallet.balance,
+            dealId: deal._id,
+            collateralStatus: collateral.status
+        })
 
     } catch (err) {
         res.status(400).send({ error: err.message})
