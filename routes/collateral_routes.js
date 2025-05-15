@@ -182,6 +182,12 @@ router.post('/admin/collateral/:id/release', auth, adminOnly, async (req, res) =
         if (!collateral) {
             res.status(404).send({ error: `Collateral with id ${collateral} not found`})
         }
+
+        // Check to see if collateral has already been released or forfeited,
+        // if it has, let the user know
+        if (collateral.status === "released" || collateral.status === "forfeited") {
+            res.status(409).send({ error: `Collateral has already been ${collateral.status}.`})
+        }
         
         // Get the collateral amount in the collateral save to a variable
         const collateralAmount = collateral.amount
@@ -225,6 +231,7 @@ router.post('/admin/collateral/:id/release', auth, adminOnly, async (req, res) =
             borrower: borrower.email,
             walletBalance: wallet.balance,
             dealId: deal._id,
+            dealComplete: deal.isComplete,
             collateralStatus: collateral.status
         })
 
