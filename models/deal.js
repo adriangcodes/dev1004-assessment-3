@@ -5,11 +5,11 @@ import LoanRequest from './loan_request.js'
 const dealSchema = new Schema({
   lenderId: {
     type: Schema.Types.ObjectId,
-    ref: User
+    ref: 'User'
   },
   loanDetails: {
     type: Schema.Types.ObjectId,
-    ref: LoanRequest
+    ref: 'LoanRequest'
   },
   isComplete: {
     type: Boolean,

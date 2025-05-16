@@ -14,14 +14,14 @@ router.get('/deals', auth, async (req, res) => {
             // Draft query string returns all deals, otherwise only incomplete deals are shown
             .find(req.query.draft ? {} : { isComplete: false })
             // Populates info from loan_request and user models
-            .populate({
-                path: 'loan_request',
-                select: '-__v -_id'
+            .populate([{
+                path: 'loanDetails',
+                select: '-__v -_id -expiry_date'
             },
             {
-                path: 'user',
-                select: '-__v -_id'
-            })
+                path: 'lenderId',
+                select: '-__v -_id -password -isAdmin -createdAt -updatedAt'
+            }])
         res.send(deals)
     } catch(err) {
         res.status(500).send({ error: err.message })
@@ -34,16 +34,16 @@ router.get('/deals/:id', auth, async (req, res) => {
     const dealId = req.params.id
     // Get the deal with the given id
     const deal = await Deal
-        .find({ _id: dealId })
+        .findById(dealId)
         // Populates info from loan_request and user models
-        .populate({
-            path: 'loan_request',
-            select: '-__v -_id'
+        .populate([{
+            path: 'loanDetails',
+            select: '-__v -_id -expiry_date'
         },
         {
-            path: 'user',
-            select: '-__v -_id'
-        })
+            path: 'lenderId',
+            select: '-__v -_id -password -isAdmin -createdAt -updatedAt'
+        }])
     // Send the deal back to the client
     if (deal) {
         res.send(deal)
