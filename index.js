@@ -31,7 +31,8 @@ app.use(interest_term_routes)
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    res.status(err.status).send({error: err.message})
+    console.error(err.stack);
+    res.status(err.status || 500).send({error: err.message});
 });
 
 app.listen(port, async () => {
