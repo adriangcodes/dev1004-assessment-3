@@ -113,4 +113,18 @@ router.delete('/deals/:id', auth, adminOnly, async (req, res) => {
     }
 })
 
+// ADMIN - Get total number of loans funded (deals complete)
+router.get('/admin/deals-complete', auth, adminOnly, async (req, res) => {
+    try {
+        // Get all deals that are complete
+        const deals = await Deal.find({isComplete: true})
+
+        const completeDeals = deals.length;
+
+        res.send({totalCompletedDeals: completeDeals})
+    } catch (err) {
+        res.status(400).send({ error: err.message })
+    }
+})
+
 export default router

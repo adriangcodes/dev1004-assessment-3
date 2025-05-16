@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken'
 import User from '../models/user.js'
 import { adminOnly, auth } from '../auth.js'
 import Wallet from '../models/wallet.js'
+import Deal from '../models/deal.js'
 
 const secret = process.env.JWT_SECRET
 const router = Router()
@@ -77,6 +78,9 @@ router.get('/wallet', auth, async (req, res) => {
         res.send({ error: err.message })
     }
 })
+
+// Get User Earnings
+// TODO: Create User Earnings after Transaction Routes Complete
 
 // ADMIN Route - Get All Users
 router.get('/users', auth, adminOnly, async (req, res) => {
