@@ -14,18 +14,17 @@ db.connect()
 // User seed data
 const users = [
     {
-        walletId: '12345678ABCD',
         email: 'admin@app.com',
         password: await bcrypt.hash('Password123', 10),
         isAdmin: true
     },
     {
-        walletId: 'ABCD87654321',
+        // walletId: 'ABCD87654321',
         email: 'hodl@satoshi.com',
         password: await bcrypt.hash('1Password', 10)
     },
     {
-        walletId: '1122334455AB',
+        // walletId: '1122334455AB',
         email: 'degen@daytrade.com',
         password: await bcrypt.hash('2thamoon!', 10)
     }
@@ -121,9 +120,31 @@ console.log('Collateral has been erased')
 const col = await Collateral.create(collateral);
 console.log('Collateral has been created')
 
+
+
+
 // Wallet seed data
+const wallet = [
+    {
+        userId: u[0]._id,
+        cryptoType: c[0]._id,
+        balance: 20.2
+    },
+    {
+        userId: u[1]._id,
+        cryptoType: c[0]._id,
+        balance: 8.81769123
+    },
+    {
+        userId: u[2]._id,
+        cryptoType: c[0]._id,
+        balance: 2.51242
+    }
+]
 await Wallet.deleteMany()
 console.log('Wallets have been erased')
+const wal = await Wallet.create(wallet);
+console.log('Wallets have been seeded')
 
 // Disconnect from DB
 db.disconnect()

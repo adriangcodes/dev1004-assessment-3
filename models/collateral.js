@@ -23,9 +23,6 @@ const collateralSchema = new Schema({
             validator: (v) => v <= Date.now(),
             message: 'Date created cannot be in the future'
         }
-    },
-    date_released: {
-        // TODO: Create an end date for a loan request
     }
 });
 

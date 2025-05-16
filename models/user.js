@@ -2,11 +2,10 @@ import { Schema, model } from 'mongoose'
 
 const userSchema = new Schema({
   walletId: {
-    type: String,
-    required: [true, 'Please enter a valid Wallet ID.'],
+    type: Schema.Types.ObjectId,
+    ref: 'Wallet',
     unique: true,
-    minLength: 1,
-    maxLength: 200
+    sparse: true
   },
   email: {
     type: String,

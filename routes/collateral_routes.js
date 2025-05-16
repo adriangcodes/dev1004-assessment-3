@@ -4,6 +4,7 @@ import Collateral from '../models/collateral.js';
 import User from '../models/user.js';
 import Deal from '../models/deal.js';
 import LoanRequest from '../models/loan_request.js';
+import Wallet from '../models/wallet.js';
 
 const router = Router();
 
@@ -29,17 +30,15 @@ router.post('/collateral', auth, async (req, res) => {
         }
 
         // Check if the borrower has enough funds to cover the collateral
-        const borrower = await User.findById(borrowerId);
-        const cryptoSymbol = "BTC"
-        const walletBalance = borrower.wallet?.get(cryptoSymbol) ?? 0;
-        
+        const wallet = await Wallet.findOne({ userId: borrowerId})
+        const walletBalance = wallet.balance
         if (walletBalance < amount) {
-            return res.status(400).send({ error: `Insufficient balance in ${cryptoSymbol} wallet` });
+            return res.status(400).send({error: `Insufficient balance`})
         }
 
         // Deduct collateral from wallet
-        borrower.wallet.set(cryptoSymbol, walletBalance - amount);
-        await borrower.save();
+        wallet.balance -= amount
+        await wallet.save()
         
         // Create collateral record
         const collateral = new Collateral({
@@ -54,6 +53,7 @@ router.post('/collateral', auth, async (req, res) => {
         res.status(500).send({ error: err.message });
     }
 })
+
 
 // Get all user's collateral
 router.get('/collateral', auth, async (req, res) => {
@@ -84,6 +84,39 @@ router.get('/collateral', auth, async (req, res) => {
         res.send(filtered)
     } catch (err) {
         res.status(500).send({ error: err.message })
+    }
+})
+
+// Get a User's Posted Collateral by ID
+router.get('/collateral/:id', auth, async (req, res) => {
+    try {
+        // Get users ID from req.auth.id
+        const { id } = req.params;
+        const collateral = await Collateral.findById(id).populate({
+            path: 'deal_id',
+            populate: {
+                path: 'loanDetails',
+                model: 'LoanRequest',
+                populate: {
+                    path: 'borrower_id',
+                    model: 'User'
+                }
+            }
+        });
+
+        if (!collateral) {
+            res.status(404).send({error: "No collateral found with that ID"})
+        } 
+
+        // Restrict access to the borrower only
+        if (collateral.deal_id.loanDetails.borrower_id._id.toString() !== req.auth.id) {
+            return res.status(403).send({error: "Unauthorised access to this collateral"})
+        }
+
+        res.send(collateral)
+        
+    } catch (err) {
+        res.status(400).send({ error: err.message})
     }
 })
 
@@ -145,6 +178,8 @@ router.get('/admin/collateral/:id', auth, adminOnly, async (req, res) => {
     }
 });
 
+
+
 //ADMIN Routes and function for updating collateral status
 async function update(req, res) {
     try {
@@ -161,10 +196,11 @@ async function update(req, res) {
     } catch (err) {
         res.status(400).send({ error: err.message})
     }
-}
-
+};
 router.put('/admin/collateral/:id', auth, adminOnly, update);
 router.patch('/admin/collateral/:id', auth, adminOnly, update);
+
+
 
 // ADMIN Route - Release or Refund Collateral after deal completion
 router.post('/admin/collateral/:id/release', auth, adminOnly, async (req, res) => {
@@ -177,13 +213,15 @@ router.post('/admin/collateral/:id/release', auth, adminOnly, async (req, res) =
         if (!collateral) {
             res.status(404).send({ error: `Collateral with id ${collateral} not found`})
         }
-        
+
+        // Check to see if collateral has already been released or forfeited,
+        // if it has, let the user know
+        if (collateral.status === "released" || collateral.status === "forfeited") {
+            res.status(409).send({ error: `Collateral has already been ${collateral.status}.`})
+        }
         
         // Get the collateral amount in the collateral save to a variable
         const collateralAmount = collateral.amount
-
-        // Get the user/borrower that the collateral belongs to and 
-        // return the collateral to the user (credit their wallet)
 
         // Find related Deal
         const deal = await Deal.findById(collateral.deal_id)
@@ -204,21 +242,33 @@ router.post('/admin/collateral/:id/release', auth, adminOnly, async (req, res) =
         };
 
         // Credit the collateral amount to the user's wallet
-        const wallet = await Wallet.findOne({ })
+        const wallet = await Wallet.findOne({ userId: borrower._id })
+        if (!wallet) {
+            res.status(404).send({error: "Wallet not found for the borrower"})
+        }
 
-        const d = await Deal.findById(dealId)
-        const ld = await Deal.findById(collateral.deal_id)
-        const loanId = ld.loanDetails
-        const loanDetails = await LoanRequest.findById(ld.loanId)
-        res.send(loanDetails)
-        // 
-        // Change the status of collateral to 'released'
-        // Get the deal '_id' of the deal
-        // Change the isComplete boolean of the deal to true
+        wallet.balance += collateralAmount
+        await wallet.save()
+
+        // Update the collateral and deal
+        collateral.status = "released"
+        await collateral.save()
+
+        deal.isComplete = true
+        await deal.save()
+
+        res.send({
+            message: 'Collateral released and credited to borrow successfully',
+            borrower: borrower.email,
+            walletBalance: wallet.balance,
+            dealId: deal._id,
+            dealComplete: deal.isComplete,
+            collateralStatus: collateral.status
+        })
 
     } catch (err) {
         res.status(400).send({ error: err.message})
     }
-})
+});
 
 export default router;
