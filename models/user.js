@@ -3,9 +3,7 @@ import { Schema, model } from 'mongoose'
 const userSchema = new Schema({
   walletId: {
     type: Schema.Types.ObjectId,
-    ref: 'Wallet',
-    unique: true,
-    sparse: true
+    ref: 'Wallet'
   },
   email: {
     type: String,
