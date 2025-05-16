@@ -147,6 +147,28 @@ router.get('/admin/collateral', auth, adminOnly, async (req, res) => {
     }
 })
 
+// ADMIN Get total amount of collateral held
+router.get('/admin/collateral/total', auth, adminOnly, async (req, res) => {
+    try {
+        // Get all collaterals where status === 'locked'
+        const collaterals = await Collateral.find({status: "locked"})
+
+        if (!collaterals || collaterals.length === 0) {
+            res.send({TotalValueCollateralHeld: 0})
+        }
+        
+        let totalCollateral = 0;
+        for (let c of collaterals) {
+            totalCollateral += c.amount
+        }
+
+        res.send({TotalValueCollateralHeld: totalCollateral})
+
+    } catch (err) {
+        res.status(400).send({ error: err.message})
+    }
+})
+
 // ADMIN Route Get collateral by ID
 router.get('/admin/collateral/:id', auth, adminOnly, async (req, res) => {
     try {
@@ -270,5 +292,7 @@ router.post('/admin/collateral/:id/release', auth, adminOnly, async (req, res) =
         res.status(400).send({ error: err.message})
     }
 });
+
+
 
 export default router;

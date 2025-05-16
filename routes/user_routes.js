@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken'
 
 import User from '../models/user.js'
 import { adminOnly, auth } from '../auth.js'
+import Wallet from '../models/wallet.js'
+import Deal from '../models/deal.js'
 
 const secret = process.env.JWT_SECRET
 const router = Router()
@@ -64,17 +66,21 @@ router.get('/wallet', auth, async (req, res) => {
     try {
         // Get the user ID from the JWT token
         const userId = req.auth.id
-        // Find the user by ID and select the wallet field
-        const user = await User.findById(userId).select('wallet')
-        if (!user) {
-            return res.status(404).send({ error: 'User not found' })
+        
+        // Get the wallet Id that user userID uses
+        const wallet = await Wallet.findOne({userId});
+        if (!wallet) {
+            return res.status(404).json({error: "Wallet not found for user"})
         }
-        // Send the user's wallet balance
-        res.send(user.wallet)
+        
+        return res.json({walletBalance: wallet.balance})
     } catch (err) {
         res.send({ error: err.message })
     }
 })
+
+// Get User Earnings
+// TODO: Create User Earnings after Transaction Routes Complete
 
 // ADMIN Route - Get All Users
 router.get('/users', auth, adminOnly, async (req, res) => {
