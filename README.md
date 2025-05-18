@@ -135,4 +135,12 @@ Team members:
 
 ## Project References
 
+Chandan, D. 2023, Building a strong Node.js controller-based folder structure, Medium, viewed 18 May 2025, https://developerchandan.medium.com/building-a-strong-node-js-controller-based-folder-structure-a96c90ae667c.
+
+Gyawali, V. 2023, Mastering Mongoose pre-hooks: A guide to enhancing data manipulation, Medium, viewed 18 May 2025, https://medium.com/@vikramgyawali57/mastering-mongoose-pre-hooks-a-guide-to-enhancing-data-manipulation-efbec44fc66f.
+
+Kumar, F. 2023, Mastering Express.js controllers: The key to clean and scalable applications, Medium, viewed 18 May 2025, https://medium.com/@finnkumar6/mastering-express-js-controllers-the-key-to-clean-and-scalable-applications-45e35f206d0b.
+
+Manalad, J. 2019, ‘Pre-save hooks in Mongoose.js’, Medium, viewed 18 May 2025, https://medium.com/@justinmanalad/pre-save-hooks-in-mongoose-js-cf1c0959dba2.
+
 Mongoose 2024, Mongoose documentation, Mongoose, viewed 17 May 2025, https://mongoosejs.com/docs/
