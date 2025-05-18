@@ -1,8 +1,7 @@
 import { Router } from "express";   
-import { auth, adminOnly } from "../auth.js";
+import { auth, adminOnly } from "../auth.js"
 import Deal from "../models/deal.js"
-import User from "../models/user.js"
-import LoanRequest from "../models/loan_request.js";
+import { createDeal } from "../controllers/deal_controller.js"
 
 const router = Router()
 router.use(auth)
@@ -53,29 +52,8 @@ router.get('/deals/:id', auth, async (req, res) => {
 })
 
 // Create deal (authorised user only)
-router.post('/deals', auth, async (req, res) => {
-    try {
-        // Get post data from request body
-        const bodyData = req.body
-        // Validate lenderId exists
-        const lenderExists = await User.findById(bodyData.lenderId)
-        if (!lenderExists) {
-            return res.status(400).send({ error: 'Lender user not found.' })
-        }
-        // Validate loanDetails exists
-        const loanRequestExists = await LoanRequest.findById(bodyData.loanDetails)
-        
-        if (!loanRequestExists) {
-            return res.status(400).send({ error: 'Loan request not found.' })
-        }
-        // Create a new Deal instance
-        const deal = await Deal.create(bodyData)
-        // Send response to client
-        res.status(201).send(deal)
-    } catch(err) {
-        res.status(400).send({ error: err.message })
-    }
- })
+// createDeal function imported from deal_controller.js
+router.post('/deals', auth, createDeal)
 
 // Update deal (admin only)
 async function update(req, res) {
