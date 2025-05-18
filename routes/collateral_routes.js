@@ -279,7 +279,7 @@ router.post('/admin/collateral/:id/release', auth, adminOnly, async (req, res) =
         deal.isComplete = true
         await deal.save()
 
-        res.send({
+        return res.send({
             message: 'Collateral released and credited to borrow successfully',
             borrower: borrower.email,
             walletBalance: wallet.balance,
@@ -289,7 +289,7 @@ router.post('/admin/collateral/:id/release', auth, adminOnly, async (req, res) =
         })
 
     } catch (err) {
-        res.status(400).send({ error: err.message})
+        return res.status(400).send({ error: err.message})
     }
 });
 

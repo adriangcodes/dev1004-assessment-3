@@ -2,6 +2,7 @@ import 'dotenv/config' // Load environment variables from .env file
 import express from 'express'
 import helmet from 'helmet'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 
 import { connect } from './db.js'
 import user_routes from './routes/user_routes.js'
@@ -19,7 +20,13 @@ const port = 8080
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',         // Frontend origin - Production only until we have a url for our front-end
+  credentials: true,                       // Allow credentials (e.g. Authorization headers)
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow JWTs in headers
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+}));
+app.use(cookieParser())
 app.use(express.json());
 
 // Routes
@@ -34,7 +41,7 @@ app.use(transaction_routes)
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(err.status || 500).send({error: err.message});
+    return res.status(err.status || 500).send({error: err.message});
 });
 
 app.listen(port, async () => {

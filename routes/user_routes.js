@@ -26,7 +26,7 @@ router.post('/register', async (req, res) => {
         // TODO: Create a JWT so the user is automatically logged in
         res.status(201).send({ email: user.email })
     }
-    catch(err) {
+    catch (err) {
         // TODO: Log to error file
         res.status(400).send({ error: err.message })
     }
@@ -40,25 +40,38 @@ router.post('/login', async (req, res) => {
         if (user) {
             // Validate the password
             const match = await bcrypt.compare(req.body.password || '', user.password)
-            if (match) {
-                // Generate a JWT and send it to the client
-                const token = jwt.sign({
-                    id: user._id.toString(),
-                    email: user.email,
-                    exp: Math.floor(Date.now() / 1000) + (60 * 120) // 2 hour window
-                }, secret)
-                res.send({ token, email: user.email })
-            } else {
-                res.status(404).send({ error: 'Email or password incorrect.' })
+            // if (match) {
+            //     // Generate a JWT and send it to the client
+            //     const token = jwt.sign({
+            //         id: user._id.toString(),
+            //         email: user.email,
+            //         exp: Math.floor(Date.now() / 1000) + (60 * 120) // 2 hour window
+            //     }, secret)
+
+            if (!match) {
+                return res.status(401).send({ error: "Invalid Credentials" })
             }
+
+            const token = jwt.sign({ id: user._id, email: user.email, isAdmin: user.isAdmin }, process.env.JWT_SECRET, {
+                expiresIn: '1h'
+            });
+
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV == 'production',
+                sameSite: 'Strict',
+                maxAge: 3600000
+            })
+
+            res.send({ token, email: user.email })
         } else {
             res.status(404).send({ error: 'Email or password incorrect.' })
         }
-    }
-    catch(err) {
-        // TODO: Log to error file
-        res.status(400).send({ error: err.message })
-    }
+}
+    catch (err) {
+    // TODO: Log to error file
+    res.status(400).send({ error: err.message })
+}
 })
 
 // Get wallet balance
@@ -66,14 +79,14 @@ router.get('/wallet', auth, async (req, res) => {
     try {
         // Get the user ID from the JWT token
         const userId = req.auth.id
-        
+
         // Get the wallet Id that user userID uses
-        const wallet = await Wallet.findOne({userId});
+        const wallet = await Wallet.findOne({ userId });
         if (!wallet) {
-            return res.status(404).json({error: "Wallet not found for user"})
+            return res.status(404).json({ error: "Wallet not found for user" })
         }
-        
-        return res.json({walletBalance: wallet.balance})
+
+        return res.json({ walletBalance: wallet.balance })
     } catch (err) {
         res.send({ error: err.message })
     }
@@ -87,7 +100,7 @@ router.get('/users', auth, adminOnly, async (req, res) => {
     try {
         const users = await User.find()
         if (!users) {
-            return res.status(404).send({ error: "No Users Found"})
+            return res.status(404).send({ error: "No Users Found" })
         }
 
         res.send(users)
