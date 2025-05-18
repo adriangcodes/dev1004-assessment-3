@@ -98,4 +98,47 @@ router.get('/users', auth, adminOnly, async (req, res) => {
     }
 })
 
+// Update user - own profile (authorised user only)
+router.put('/user', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.auth.id)
+        if (!user) {
+            return res.status(404).send({ error: `User with id ${req.auth.id} not found.` })
+        }
+        const updatedUser = await User.findByIdAndUpdate(req.auth.id, req.body, { returnDocument: 'after' })
+        res.status(200).send(updatedUser)
+    } catch (err) {
+        res.status(400).send({ error: err.message })
+    }
+})
+
+// Update any user (admin only)
+router.put('/users/:id', auth, adminOnly, async (req, res) => {
+    try {
+        const userId = req.params.id
+        const user = await User.findById(userId)
+        if (!user) {
+            return res.status(404).send({ error: `User with id ${userId} not found.` })
+        }
+        const updatedUser = await User.findByIdAndUpdate(userId, req.body, { returnDocument: 'after' })
+        res.status(200).send(updatedUser)
+    } catch (err) {
+        res.status(400).send({ error: err.message })
+    }
+})
+
+// Delete user (admin only)
+router.delete('/users/:id', auth, adminOnly, async (req, res) => {
+    try {
+        const userId = req.params.id
+        const deletedUser = await User.findByIdAndDelete(userId)
+        if (!deletedUser) {
+            return res.status(404).send({ error: "User not found" })
+        }
+        res.status(200).send({ message: "User deleted successfully" })
+    } catch (err) {
+        res.status(500).send({ error: err.message })
+    }
+})
+
 export default router
