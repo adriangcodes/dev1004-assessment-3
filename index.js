@@ -26,8 +26,9 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'], // Allow JWTs in headers
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
 }));
-app.use(cookieParser())
 app.use(express.json());
+app.use(cookieParser())
+
 
 // Routes
 app.use(user_routes)
