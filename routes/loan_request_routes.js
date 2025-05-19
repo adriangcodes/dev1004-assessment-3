@@ -3,6 +3,7 @@ import { auth, adminOnly } from "../auth.js"; // Import the JWT middleware
 import LoanRequest from "../models/loan_request.js";
 import Cryptocurrency from "../models/cryptocurrency.js";
 import InterestTerm from "../models/interest_term.js";
+import Wallet from "../models/wallet.js"
 
 const router = Router();
 
@@ -22,6 +23,15 @@ router.post("/loan-request", auth, async (req, res) => {
         const interestTermDoc = await InterestTerm.findOne({loan_length: loan_term})
         if (!interestTermDoc) {
             return res.status(400).json({ error: `Loan term of ${loan_term} months not found. Try 1, 3, or 6 months`})
+        }
+        // Fetch user's wallet for the given cryptocurrency
+        const wallet = await Wallet.findOne({ user: userId, cryptocurrency: cryptoDoc._id });
+        if (!wallet) {
+            return res.status(400).json({ error: `User does not have a wallet for ${cryptocurrency_symbol}.` });
+        }
+        // Ensure wallet balance covers the requested amount
+        if (wallet.balance < request_amount) {
+            return res.status(400).json({ error: `Insufficient funds in wallet. You must have at least ${request_amount} ${cryptocurrency_symbol} to request this loan.` });
         }
         // Add new Loan Request to the db
         const loanRequest = await LoanRequest.create({ 
