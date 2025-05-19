@@ -37,26 +37,28 @@ router.get('/wallet-balance', auth, async (req, res) => {
     }
 })
 
-// Get all wallet from a single user (authorised user only)
-router.get('/wallets/:id', auth, async (req, res) => {
-    const walletId = req.params.id
-    // Fetch the wallet with the given id
-    try {
-        const wallet = await Wallet.findById(walletId)
-    // Check the wallet exists, if not return error message
-    if (!wallet) {
-        return res.status(404).send({ error: `Wallet with id ${walletId} not found.` })
-    }
-    // Check the user is accessing their own wallet data, if not return error message
-    if (wallet.userId.toString() !== req.user._id.toString()) {
-        return res.status(403).send({ error: 'Access denied: you are not authorised to view this wallet.' })
-    }
-    // Send wallet to client if it satisfies the above criteria
-    res.send(wallet)
-    } catch (err) {
-    res.status(500).send({ error: err.message })
-    }
-})
+// Code below has been commented out as we only have a single wallet per user at this stage.
+
+// // Get all wallet from a single user (authorised user only)
+// router.get('/wallets/:id', auth, async (req, res) => {
+//     const walletId = req.params.id
+//     // Fetch the wallet with the given id
+//     try {
+//         const wallet = await Wallet.findById(walletId)
+//     // Check the wallet exists, if not return error message
+//     if (!wallet) {
+//         return res.status(404).send({ error: `Wallet with id ${walletId} not found.` })
+//     }
+//     // Check the user is accessing their own wallet data, if not return error message
+//     if (wallet.userId.toString() !== req.user._id.toString()) {
+//         return res.status(403).send({ error: 'Access denied: you are not authorised to view this wallet.' })
+//     }
+//     // Send wallet to client if it satisfies the above criteria
+//     res.send(wallet)
+//     } catch (err) {
+//     res.status(500).send({ error: err.message })
+//     }
+// })
 
 // Create a wallet (authorised user only)
 router.post('/wallets', auth, async (req, res) => {
