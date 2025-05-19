@@ -60,7 +60,7 @@ router.post('/login', async (req, res) => {
                 httpOnly: true,
                 secure: process.env.NODE_ENV == 'production',
                 sameSite: 'Strict',
-                maxAge: 3600000
+                maxAge: 1000 * 60 * 60 // 1 Hour
             })
 
             res.send({ token, email: user.email })
