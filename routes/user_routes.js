@@ -17,7 +17,6 @@ router.post('/register', async (req, res) => {
         const bodyData = req.body
         // Create and save new User instance
         const user = await User.create({
-            walletId: req.body.walletId,
             email: req.body.email,
             password: await bcrypt.hash(req.body.password, 10)
         })
@@ -73,9 +72,6 @@ router.post('/login', async (req, res) => {
     res.status(400).send({ error: err.message })
 }
 })
-
-// Get User Earnings
-// TODO: Create User Earnings after Transaction Routes Complete
 
 // ADMIN Route - Get All Users
 router.get('/users', auth, adminOnly, async (req, res) => {

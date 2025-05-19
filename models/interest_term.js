@@ -5,7 +5,6 @@ const interestTermSchema = new Schema({
         type: Number, 
         required: true,
         min: [1, 'Loan length must be at least 1 month'],
-        max: [6, 'Loan length cannot exceed 6 months'],
         validate: {
             validator: Number.isInteger,
             message: 'Loan length must be an integer (in months)'

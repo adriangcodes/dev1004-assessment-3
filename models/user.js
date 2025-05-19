@@ -1,10 +1,6 @@
 import { Schema, model } from 'mongoose'
 
 const userSchema = new Schema({
-  walletId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Wallet'
-  },
   email: {
     type: String,
     required: [true, 'Please enter a valid email address.'],
