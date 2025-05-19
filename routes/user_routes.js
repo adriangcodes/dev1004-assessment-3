@@ -91,9 +91,6 @@ router.get('/wallet', auth, async (req, res) => {
     }
 })
 
-// Get User Earnings
-// TODO: Create User Earnings after Transaction Routes Complete
-
 // ADMIN Route - Get All Users
 router.get('/users', auth, adminOnly, async (req, res) => {
     try {
