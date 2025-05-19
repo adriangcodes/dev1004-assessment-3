@@ -64,7 +64,7 @@ const interestTerm = [
     },
     {
         loan_length: 6,
-        interest_rate: 5.9
+        interest_rate: 5.5
     }
 ]
 

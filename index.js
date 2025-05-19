@@ -12,6 +12,7 @@ import collateral_routes from './routes/collateral_routes.js'
 import wallet_routes from './routes/wallet_routes.js'
 import interest_term_routes from './routes/interest_term_routes.js'
 import transaction_routes from './routes/transaction_routes.js'
+import cryptocurrency_routes from './routes/cryptocurrency_routes.js'
 
 // console.log(process.env) // Check if environment variables are loaded correctly
 
@@ -38,6 +39,7 @@ app.use(collateral_routes)
 app.use(wallet_routes)
 app.use(interest_term_routes)
 app.use(transaction_routes)
+app.use(cryptocurrency_routes)
 
 // Error handling middleware
 app.use((err, req, res, next) => {
