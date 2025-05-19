@@ -68,7 +68,7 @@ async function update(req, res) {
 router.put('/interest-terms/:id', auth, adminOnly, update)
 router.patch('/interest-terms/:id', auth, adminOnly, update)
 
-// Delete wallet (admin only)
+// Delete interest term (admin only)
 router.delete('/interest-terms/:id', auth, adminOnly, async (req, res) => {
     try {
         const termId = req.params.id
