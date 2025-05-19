@@ -21,6 +21,9 @@ export async function createDeal(req, res) {
     const deal = await Deal.create(bodyData)
     // Triggers automatic payment schedule within Transaction
     await Transaction.generateRepaymentSchedule(deal._id)
+    // Update loan request status to 'funded'
+    loanRequestExists.status = 'funded'
+    await loanRequestExists.save()
     // Send response to client
     res.status(201).json(deal)
   } catch (err) {
