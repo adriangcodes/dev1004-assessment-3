@@ -74,24 +74,6 @@ router.post('/login', async (req, res) => {
 }
 })
 
-// Get wallet balance
-router.get('/wallet', auth, async (req, res) => {
-    try {
-        // Get the user ID from the JWT token
-        const userId = req.auth.id
-
-        // Get the wallet Id that user userID uses
-        const wallet = await Wallet.findOne({ userId });
-        if (!wallet) {
-            return res.status(404).json({ error: "Wallet not found for user" })
-        }
-
-        return res.json({ walletBalance: wallet.balance })
-    } catch (err) {
-        res.send({ error: err.message })
-    }
-})
-
 // Get User Earnings
 // TODO: Create User Earnings after Transaction Routes Complete
 
