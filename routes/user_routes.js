@@ -17,7 +17,6 @@ router.post('/register', async (req, res) => {
         const bodyData = req.body
         // Create and save new User instance
         const user = await User.create({
-            walletId: req.body.walletId,
             email: req.body.email,
             password: await bcrypt.hash(req.body.password, 10)
         })
