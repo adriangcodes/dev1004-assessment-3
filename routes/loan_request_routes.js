@@ -8,7 +8,7 @@ import Wallet from "../models/wallet.js"
 const router = Router();
 
 // Create a new loan request (authorised user only)
-router.post("/loan-request", auth, async (req, res) => {
+router.post("/loan-requests", auth, async (req, res) => {
     try {
         // Get the user ID from the authenticated user 
         const userId = req.auth.id;
@@ -53,7 +53,7 @@ router.post("/loan-request", auth, async (req, res) => {
 })
 
 // Get all loan requests (authorised user only)
-router.get('/loan-request', auth, async (req, res) => {
+router.get('/loan-requests', auth, async (req, res) => {
     try {
         // Get all loan requests from the database
         const loanRequests = await LoanRequest
@@ -70,7 +70,7 @@ router.get('/loan-request', auth, async (req, res) => {
 })
 
 // Get a specific loan request by ID (authorised user only)
-router.get('/loan-request/:id', auth, async (req, res) => {
+router.get('/loan-requests/:id', auth, async (req, res) => {
     try {
         // Get the loan request ID from the request parameters
         const loanRequestId = req.params.id;
@@ -112,11 +112,11 @@ async function update(req, res) {
     }
 }
 
-router.put('/loan-request/:id', auth, adminOnly, update)
-router.patch('/loan-request/:id', auth, adminOnly, update)
+router.put('/loan-requests/:id', auth, adminOnly, update)
+router.patch('/loan-requests/:id', auth, adminOnly, update)
 
 // Delete loan request (admin only)
-router.delete('/loan-request/:id', auth, adminOnly, async (req, res) => {
+router.delete('/loan-requests/:id', auth, adminOnly, async (req, res) => {
     try {
         const loanRequestId = req.params.id
         const loanRequest = await LoanRequest.findByIdAndDelete(loanRequestId)
