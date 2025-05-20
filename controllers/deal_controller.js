@@ -28,10 +28,17 @@ export async function createDeal(req, res) {
     const cryptoAmount = loanRequestExists.request_amount;
     const borrowerId = loanRequestExists.borrower_id;
 
-    const lenderWallet = await Wallet.findOne({ user: bodyData.lenderId, cryptocurrency: cryptoId });
+    console.log('Looking for lender wallet with:', {
+      userId: bodyData.lenderId,
+      cryptoType: cryptoId
+    });
+
+    const lenderWallet = await Wallet.findOne({ userId: bodyData.lenderId, cryptoType: cryptoId });
     if (!lenderWallet || lenderWallet.balance < cryptoAmount) {
       return res.status(400).json({ error: 'Lender does not have sufficient funds to fund this loan.' });
     }
+
+    console.log('Found lender wallet:', lenderWallet);
 
     // Check borrower has collateral equivalent to the requested amount
     const collateralWallet = await Wallet.findOne({ userId: borrowerId, cryptoType: cryptoId });
