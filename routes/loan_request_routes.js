@@ -25,7 +25,7 @@ router.post("/loan-requests", auth, async (req, res) => {
             return res.status(400).json({ error: `Loan term of ${loan_term} months not found. Try 1, 3, or 6 months`})
         }
         // Fetch user's wallet for the given cryptocurrency
-        const wallet = await Wallet.findOne({ user: userId, cryptocurrency: cryptoDoc._id });
+        const wallet = await Wallet.findOne({ userId: userId, cryptoType: cryptoDoc._id });
         if (!wallet) {
             return res.status(400).json({ error: `User does not have a wallet for ${cryptocurrency_symbol}.` });
         }
@@ -120,7 +120,7 @@ router.delete('/loan-requests/:id', auth, adminOnly, async (req, res) => {
     try {
         const loanRequestId = req.params.id
         const loanRequest = await LoanRequest.findByIdAndDelete(loanRequestId)
-        if (crypto) {
+        if (loanRequest) {
             res.status(200).send({ message: 'Loan request deleted successfully.' })
         } else {
             res.status(404).send({ error: `Loan request with id ${loanRequestId} not found.` })
