@@ -77,7 +77,7 @@ console.log('Interest terms created.')
 // Loan Request seed data
 const loanRequest = [
     {
-        borrower_id: u[0]._id,
+        borrower_id: u[2]._id,
         request_amount: 0.5,
         interest_term: i[1]._id,
         cryptocurrency: c[0]._id,
@@ -91,19 +91,18 @@ console.log('Loan Requests have been erased')
 const lr = await LoanRequest.create(loanRequest);
 console.log('Loan Requests have been created')
 
-const deals = [
-    {
-        lenderId: u[1]._id,
-        loanDetails: lr[0]._id,
-        isComplete: false
-    }
-]
+// const deals = [
+//     {
+//         lenderId: u[1]._id,
+//         loanDetails: lr[0]._id,
+//         isComplete: false
+//     }
+// ]
 
 await Deal.deleteMany()
 console.log('Deals have been erased')
 const d = await Deal.create(deals);
 console.log('Deals have been created')
-
 
 // Collateral seed data
 const collateral = [
@@ -119,9 +118,6 @@ await Collateral.deleteMany()
 console.log('Collateral has been erased')
 const col = await Collateral.create(collateral);
 console.log('Collateral has been created')
-
-
-
 
 // Wallet seed data
 const wallet = [
