@@ -91,13 +91,13 @@ console.log('Loan Requests have been erased')
 const lr = await LoanRequest.create(loanRequest);
 console.log('Loan Requests have been created')
 
-// const deals = [
-//     {
-//         lenderId: u[1]._id,
-//         loanDetails: lr[0]._id,
-//         isComplete: false
-//     }
-// ]
+const deals = [
+    {
+        lenderId: u[1]._id,
+        loanDetails: lr[0]._id,
+        isComplete: false
+    }
+]
 
 await Deal.deleteMany()
 console.log('Deals have been erased')
