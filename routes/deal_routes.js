@@ -6,12 +6,29 @@ import { createDeal } from "../controllers/deal_controller.js"
 const router = Router()
 router.use(auth)
 
-// Get all deals (authorised user only)
-router.get('/deals', auth, async (req, res) => {
+// Get all User's Deals
+router.get('/user-deals', auth, async (req, res) => {
+    try {
+        const userId = req.auth.id
+
+        const deals = await Deal.find({userId})
+        if (!deals || deals.length == 0) {
+            return res.status(404).send({message: "Deals not found for this user"})
+        }
+
+        return res.send(deals)
+    } catch (err) {
+        return res.status(400).send({ error: err.message})
+    }
+})
+
+// Get all deals (Admin only)
+router.get('/deals', auth, adminOnly, async (req, res) => {
     try {
         const deals = await Deal
             // Draft query string returns all deals, otherwise only incomplete deals are shown
-            .find(req.query.draft ? {} : { isComplete: false })
+            // .find(req.query.draft ? {} : { isComplete: false })
+            .find()
             // Populates info from loan_request and user models
             .populate([{
                 path: 'loanDetails',
@@ -104,5 +121,20 @@ router.get('/admin/deals-complete', auth, adminOnly, async (req, res) => {
         res.status(400).send({ error: err.message })
     }
 })
+
+// ADMIN - Get total number of deals active
+router.get('/admin/deals-incomplete', auth, adminOnly, async (req, res) => {
+    try {
+        // Get all deals that are complete
+        const deals = await Deal.find({isComplete: false})
+
+        const activeDeals = deals.length;
+
+        res.send({ActiveDeals: activeDeals})
+    } catch (err) {
+        res.status(400).send({ error: err.message })
+    }
+})
+
 
 export default router
