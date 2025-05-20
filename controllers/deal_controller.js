@@ -71,7 +71,7 @@ export async function createDeal(req, res) {
     await loanRequestExists.save()
 
     // Send response to client
-    res.status(201).json({ message: "Loan request funded, deal successfully created.", deal });
+    res.status(201).json({ message: "Loan request funded, deal successfully created and funds transferred.", deal });
 
   } catch (err) {
     res.status(500).send({ error: err.message })
