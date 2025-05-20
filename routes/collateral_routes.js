@@ -8,54 +8,25 @@ import Wallet from '../models/wallet.js';
 
 const router = Router();
 
-// Create a new collateral entry
-// Trying to post the collateral to the deal when the deal is created
-router.post('/collateral', auth, async (req, res) => {
+// Create a new collateral entry (admin only)
+router.post('/admin/collateral', auth, adminOnly, async (req, res) => {
     try {
-        // Get the deal ID from the request body
-        const { deal_id } = req.body
-
-        const deal = await Deal.findById(deal_id).populate('loanDetails');
-        if (!deal) {
-            return res.status(404).send({ error: 'Deal not found' });
+        const { deal_id, amount, status } = req.body
+        if (!deal_id || !amount || !status) {
+            return res.status(400).send({ error: "deal_id, amount, and status are required fields." });
         }
-
-        const loan = deal.loanDetails; // Get the loan details from the deal
-        const borrowerId = loan.borrower_id; // Get the borrower ID from the loan
-        const amount = loan.request_amount; // Get the loan amount from the loan
-
-        // Check if the authenticated user is the borrower of the loan
-        if (borrowerId.toString() !== req.auth.id) {
-            return res.status(403).send({ error: 'You are not the borrower for this deal' });
-        }
-
-        // Check if the borrower has enough funds to cover the collateral
-        const wallet = await Wallet.findOne({ userId: borrowerId})
-        const walletBalance = wallet.balance
-        if (walletBalance < amount) {
-            return res.status(400).send({error: `Insufficient balance`})
-        }
-
-        // Deduct collateral from wallet
-        wallet.balance -= amount
-        await wallet.save()
-        
-        // Create collateral record
-        const collateral = new Collateral({
-            deal_id,
-            amount
-        })
-        await collateral.save();
-
-        
-        res.status(201).send({ message: 'Collateral posted successfully', collateral});
+    const collateral = await Collateral.create({
+        deal_id,
+        amount,
+        status
+        });
+    res.status(201).send(collateral);
     } catch (err) {
-        res.status(500).send({ error: err.message });
+        res.status(400).send({ error: err.message });
     }
-})
+});
 
-
-// Get all user's collateral
+// Get all user's collateral 
 router.get('/collateral', auth, async (req, res) => {
     try {
         // Get the user ID from the JWT token
