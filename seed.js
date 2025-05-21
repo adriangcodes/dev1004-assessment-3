@@ -7,6 +7,7 @@ import LoanRequest from './models/loan_request.js'
 import Wallet from './models/wallet.js'
 import Deal from './models/deal.js'
 import Collateral from './models/collateral.js'
+import Transaction from './models/transaction.js'
 
 // Connect to DB
 db.connect()
@@ -91,33 +92,11 @@ console.log('Loan Requests have been erased')
 const lr = await LoanRequest.create(loanRequest);
 console.log('Loan Requests have been created')
 
-const deals = [
-    {
-        lenderId: u[1]._id,
-        loanDetails: lr[0]._id,
-        isComplete: false
-    }
-]
-
 await Deal.deleteMany()
 console.log('Deals have been erased')
-const d = await Deal.create(deals);
-console.log('Deals have been created')
-
-// Collateral seed data
-const collateral = [
-    {
-        deal_id: d[0]._id,
-        amount: 0.5,
-        status: 'pending',
-        date_created: Date.now()
-    }
-]
 
 await Collateral.deleteMany()
 console.log('Collateral has been erased')
-const col = await Collateral.create(collateral);
-console.log('Collateral has been created')
 
 // Wallet seed data
 const wallet = [
@@ -141,6 +120,9 @@ await Wallet.deleteMany()
 console.log('Wallets have been erased')
 const wal = await Wallet.create(wallet);
 console.log('Wallets have been seeded')
+
+await Transaction.deleteMany()
+console.log('Transactions have been erased')
 
 // Disconnect from DB
 db.disconnect()

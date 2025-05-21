@@ -35,7 +35,7 @@ describe('Collateral model', () => {
 })
 
 describe('Collateral Model', () => {
-  it('creates and saves a valid collateral', async () => {
+  test('creates and saves a valid collateral', async () => {
     const validCollateral = new Collateral({
       deal_id: new mongoose.Types.ObjectId(),
       amount: 1.25,
@@ -48,7 +48,7 @@ describe('Collateral Model', () => {
     expect(saved.amount).toBe(1.25)
   })
 
-  it('defaults status to pending', async () => {
+  test('defaults status to pending', async () => {
     const collateral = new Collateral({
       deal_id: new mongoose.Types.ObjectId(),
       amount: 2.5
@@ -58,7 +58,7 @@ describe('Collateral Model', () => {
     expect(saved.status).toBe('pending')
   })
 
-  it('throws validation error for missing amount', async () => {
+  test('throws validation error for missing amount', async () => {
     const invalidCollateral = new Collateral({
       deal_id: new mongoose.Types.ObjectId(),
     })
@@ -74,7 +74,7 @@ describe('Collateral Model', () => {
     expect(err.errors.amount).toBeDefined()
   })
 
-  it('throws error for future date_created', async () => {
+  test('throws error for future date_created', async () => {
     const futureDate = new Date(Date.now() + 1000000)
 
     const collateral = new Collateral({
