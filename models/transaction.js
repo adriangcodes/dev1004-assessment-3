@@ -43,7 +43,7 @@ const transactionSchema = new Schema({
   },
   expectedPaymentDate: {
     type: Date,
-    required: true
+    // required: true
   },
   paymentStatus: {
     type: Boolean,
