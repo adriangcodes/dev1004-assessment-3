@@ -13,6 +13,9 @@ router.get('/transactions', auth, adminOnly, async (req, res) => {
     try {
         // Find all transactions
         const transactions = await Transaction.find({})
+        if (!transactions || transactions.length == 0) {
+            return res.status(404).send({message: "No transactions found"})
+        }
         // Send all transactions back to the client
         res.send(transactions)
     } catch(err) {
@@ -45,7 +48,7 @@ router.get('/transactions/:id', auth, async (req, res) => {
 router.post('/transactions', auth, adminOnly, async (req, res) => {
     try {
         // Check required fields
-        const { fromUser, toUser, fromWallet, toWallet, dealId } = req.body
+        const { fromUser, toUser, fromWallet, toWallet, dealId,  isLoanRepayment } = req.body
         // Check for required fields
         if (!fromUser || !toUser || !fromWallet || !toWallet || !dealId) {
             return res.status(400).send({ error: 'Missing required fields.' })
@@ -65,10 +68,19 @@ router.post('/transactions', auth, adminOnly, async (req, res) => {
         if (!dealExists) {
             return res.status(400).send({ error: 'Deal not found.' })
         }
-        // Create a new Transaction instance
-        const transaction = await Transaction.create(req.body)
-        // Send response to client
-        res.status(201).send(transaction)
+
+        // Here we check if the transaction is a loan repayment
+        // if yes, we create a repayment schedule
+        // if no, we create a one off transaction
+        if (isLoanRepayment) {
+            //Generate full repayment schedule
+            const transactions = await Transaction.generateRepaymentSchedule(dealId)
+            return res.status(201).send(transactions)
+        } else {
+            const transaction = await Transaction.create(req.body)
+            return res.status(201).send(transaction)
+        }
+
     } catch(err) {
         res.status(400).send({ error: err.message })
     }

@@ -25,17 +25,17 @@ const transactionSchema = new Schema({
     ref: Deal
   },
   amount: {
-      type: Number,
-      min: [0, 'Transaction amount cannot be negative.'],
-      // Max limit set based on initial operation of Bitcoin only
-      max: [21000000, 'Amount cannot exceed 21 million.'],
-      validate: {
+    type: Number,
+    min: [0, 'Transaction amount cannot be negative.'],
+    // Max limit set based on initial operation of Bitcoin only
+    max: [21000000, 'Amount cannot exceed 21 million.'],
+    validate: {
       // Validates amount entry to ensure it has a maximum of 8 decimal places, and that a numeral features before the decimal place (ie. 0.5 not .5)
       validator: function (v) {
-          return /^\d+(\.\d{1,8})?$/.test(v.toString())
+        return /^\d+(\.\d{1,8})?$/.test(v.toString())
       },
       message: 'Amount must be a number with up to 8 decimal places'
-      }
+    }
   },
   isLoanRepayment: {
     type: Boolean,
@@ -43,7 +43,7 @@ const transactionSchema = new Schema({
   },
   expectedPaymentDate: {
     type: Date,
-    required: true
+    // required: true
   },
   paymentStatus: {
     type: Boolean,
@@ -52,6 +52,9 @@ const transactionSchema = new Schema({
 }, { timestamps: true })
 
 //Pre-save hook to generate transaction based on an associated dealId
+// The admin user is involved as this simulates the platform holding crypto
+// on behalf of the lender and disbursing it once the deal is active. This 
+// simulates an escrow-style or trustless-intermediary pattern.
 transactionSchema.statics.generateRepaymentSchedule = async function (dealId) {
   const deal = await Deal.findById(dealId).populate({
     path: 'loanDetails',
@@ -61,16 +64,20 @@ transactionSchema.statics.generateRepaymentSchedule = async function (dealId) {
     }
   }).populate('lenderId')
 
-  if (!deal || !deal.loanDetails || !deal.loanDetails.borrowerId) {
+  if (!deal || !deal.loanDetails || !deal.loanDetails.borrower_id) {
     throw new Error('Deal or borrower information missing')
   }
 
-  const borrower = deal.loanDetails.borrowerId
+  const borrower = deal.loanDetails.borrower_id
   const lender = deal.lenderId
   const term = deal.loanDetails.interest_term
-  const loanAmount = deal.loanDetails.amount
+  const loanAmount = deal.loanDetails.request_amount
   const repaymentMonths = term.loan_length
   const interestRate = term.interest_rate
+
+  if (!loanAmount || !repaymentMonths || !interestRate) {
+    throw new Error('Missing loan amount, term length, or interest rate')
+  }
 
   const monthlyRate = interestRate / 12 / 100
   const monthlyPayment = parseFloat(((loanAmount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -repaymentMonths))).toFixed(8))
@@ -98,11 +105,12 @@ transactionSchema.statics.generateRepaymentSchedule = async function (dealId) {
     })
   }
 
-  const admin = await User.findOne({ role: 'admin' })
+  const admin = await User.findOne({ isAdmin: true })
   const borrowerWallet = await Wallet.findOne({ userId: borrower })
 
-  if (!admin || !borrowerWallet) throw new Error('Admin or borrower wallet not found')
 
+  if (!admin || !borrowerWallet) throw new Error('Admin or borrower wallet not found')
+  
   transactions.push({
     dealId,
     fromUser: admin._id,
