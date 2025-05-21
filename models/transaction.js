@@ -52,6 +52,9 @@ const transactionSchema = new Schema({
 }, { timestamps: true })
 
 //Pre-save hook to generate transaction based on an associated dealId
+// The admin user is involved as this simulates the platform holding crypto
+// on behalf of the lender and disbursing it once the deal is active. This 
+// simulates an escrow-style or trustless-intermediary pattern.
 transactionSchema.statics.generateRepaymentSchedule = async function (dealId) {
   const deal = await Deal.findById(dealId).populate({
     path: 'loanDetails',
