@@ -1,7 +1,13 @@
-import { Router } from "express";   
+import { Router } from "express" 
+
 import { auth, adminOnly } from "../auth.js"
+
 import Deal from "../models/deal.js"
-import { createDeal } from "../controllers/deal_controller.js"
+import User from "../models/user.js"
+import LoanRequest from "../models/loan_request.js"
+import Wallet from "../models/wallet.js"
+import Collateral from "../models/collateral.js"
+import Transaction from "../models/transaction.js"
 
 const router = Router()
 router.use(auth)
@@ -52,8 +58,91 @@ router.get('/deals/:id', auth, async (req, res) => {
 })
 
 // Create deal (authorised user only)
-// createDeal function imported from deal_controller.js
-router.post('/deals', auth, createDeal)
+
+// Helper functions
+// Validate user
+async function validateUserById(userId) {
+  const user = await User.findById(userId);
+  if (!user) throw new Error('Lender user not found.');
+  return user;
+}
+
+// Validate loan request
+async function validateLoanRequestById(loanId) {
+  const loan = await LoanRequest.findById(loanId);
+  if (!loan) throw new Error('Loan request not found.');
+  return loan;
+}
+// Validate wallet
+async function getAndValidateWallet(userId, cryptoId, requiredAmount, label) {
+  // Try both userId and user field for compatibility
+  let wallet = await Wallet.findOne({ userId, cryptoType: cryptoId });
+  if (!wallet) {
+    wallet = await Wallet.findOne({ user: userId, cryptocurrency: cryptoId });
+  }
+  if (!wallet || wallet.balance < requiredAmount) {
+    throw new Error(`${label} does not have sufficient funds.`);
+  }
+  return wallet;
+}
+
+// Route
+router.post('/deals', auth, async (req, res) => {
+  try {
+    // Fetch data from json
+    const bodyData = req.body
+    // User validation function
+    await validateUserById(bodyData.lenderId)
+    const loan = await validateLoanRequestById(bodyData.loanDetails)
+
+    const cryptoId = loan.cryptocurrency
+    const cryptoAmount = loan.request_amount
+    const borrowerId = loan.borrower_id
+
+    // Wallet validation function
+    const lenderWallet = await getAndValidateWallet(bodyData.lenderId, cryptoId, cryptoAmount, 'Lender')
+    const borrowerCollateralWallet = await getAndValidateWallet(borrowerId, cryptoId, cryptoAmount, 'Borrower')
+
+    // Transfer loan balance out of lender wallet
+    lenderWallet.balance -= cryptoAmount
+    await lenderWallet.save()
+
+    // Transfer collateral amount out of borrower wallet
+    borrowerCollateralWallet.balance -= cryptoAmount
+    await borrowerCollateralWallet.save()
+
+    // Update wallet
+    await Wallet.findOneAndUpdate(
+      { userId: borrowerId, cryptoType: cryptoId },
+      { $inc: { balance: cryptoAmount } },
+      { new: true, upsert: true }
+    );
+
+    // Create deal instance
+    const deal = await Deal.create(bodyData);
+
+    // Create collateral instance
+    await Collateral.create({
+      deal_id: deal._id,
+      amount: cryptoAmount
+    });
+
+    // Trigger transaction repayment schedule
+    await Transaction.generateRepaymentSchedule(deal._id)
+
+    // Update loan request status to funded
+    loan.status = 'funded';
+    await loan.save();
+
+    // Return response to client
+    res.status(201).json({
+      message: "Loan request funded, deal successfully created and funds transferred.",
+      deal
+    })
+  } catch (err) {
+    res.status(500).send({ error: err.message })
+  }
+})
 
 // Update deal (admin only)
 async function update(req, res) {
