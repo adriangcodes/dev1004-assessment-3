@@ -51,3 +51,8 @@ app.listen(port, async () => {
     console.log(`Back-end is listening on port ${port}`)
     connect()
 });
+
+// This is a health endpoint that can be pinged freely
+app.get('/health', (req, res) => {
+  res.status(200).send('Server is healthy');
+});
