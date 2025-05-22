@@ -62,7 +62,7 @@ router.post('/login', async (req, res) => {
                 maxAge: 1000 * 60 * 60 // 1 Hour
             })
 
-            res.send({ token, email: user.email, isAdmin })
+            res.send({ token, email: user.email, isAdmin: user.isAdmin })
         } else {
             res.status(404).send({ error: 'Email or password incorrect.' })
         }
