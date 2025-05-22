@@ -19,6 +19,11 @@ import cryptocurrency_routes from './routes/cryptocurrency_routes.js'
 const app = express()
 const port = 8080
 
+// This is a health endpoint that can be pinged freely
+app.get('/health', (req, res) => {
+  res.status(200).send('Server is healthy');
+});
+
 // Middleware
 app.use(helmet());
 app.use(cors({
@@ -52,7 +57,3 @@ app.listen(port, async () => {
     connect()
 });
 
-// This is a health endpoint that can be pinged freely
-app.get('/health', (req, res) => {
-  res.status(200).send('Server is healthy');
-});
