@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 // Connect to MongoDB
 export async function connect() {
-    await mongoose.connect('mongodb://127.0.0.1:27017/p2p_crypto_lender_db')
+    await mongoose.connect(process.env.MONGODB_URI)
     console.log(mongoose.connection.readyState == 1 ? "Connected to MongoDB" : "Failed to connect to MongoDB")
 }
 
