@@ -4,7 +4,11 @@ A secure and efficient backend system for peer-to-peer cryptocurrency lending, b
 
 ## Overview
 
-This project is a backend web service that powers a peer-to-peer cryptocurrency lending platform. It enables users to securely lend and borrow crypto assets, manage collateral, and track deals and transactions. The app simulates core lending workflows and adheres to industry-standard practices for authentication, data validation, and route protection.
+SatoshiFund is a back-end API built for a peer-to-peer cryptocurrency lending platform. It enables users to securely lend and borrow crypto assets, manage collateral, and track deals and transactions. The app simulates core lending workflows and adheres to industry-standard practices for authentication, data validation, and route protection.
+
+Developed with Node.js, Express, and MongoDB, the app prioritizes modular architecture, secure authentication (via JWT), and robust error handling. Mongoose provides schema validation and clean data modeling. The platform uses RESTful principles to deliver predictable endpoints and supports role-based access control to protect sensitive operations.
+
+Built as part of a collaborative full-stack project, SatoshiFund showcases scalable backend design and practical implementation of modern web development best practices.
 
 ### Features
 - User registration and login with JWT authentication
