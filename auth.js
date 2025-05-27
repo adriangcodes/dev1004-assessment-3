@@ -7,7 +7,14 @@ import User from './models/user.js'
 export function auth(req, res, next) {
 
     // Extract the JWT from the token in the incoming request
-    const token = req.cookies.token
+    let token = req.cookies.token
+
+    if (!token) {
+        const authHeader = req.headers.authorization;
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            token = authHeader.substring(7);
+        }
+    }
 
     if (!token) {
         return res.status(401).send({ error: "No token provided." })

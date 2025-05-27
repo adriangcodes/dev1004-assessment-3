@@ -1,6 +1,7 @@
 import { Router } from "express";   
 import { auth, adminOnly } from "../auth.js";
 import InterestTerm from "../models/interest_term.js"
+import Deal from "../models/deal.js"
 
 const router = Router()
 router.use(auth)
@@ -31,6 +32,54 @@ router.get('/interest-terms/:id', auth, async (req, res) => {
     res.send(term)
     } catch (err) {
     res.status(500).send({ error: err.message })
+    }
+})
+
+// Get an average interest rate across all deals (completed and active)
+router.get('/admin/average-interest-rate', auth, adminOnly, async (req, res) => {
+    try {
+        // Get all deal data
+        const deals = await Deal.find({})
+        // Populate the deals with the interest term data
+        .populate({
+            path: 'loanDetails',
+            populate: {
+                path: 'interest_term',
+                select: 'interest_rate'
+            }
+        })
+        
+        // Calculate the average interest rate
+        if (!deals || deals.length === 0) {
+            return res.status(404).send({ error: "No deals found" })
+        }
+        // Initialize variables to store the total interest rate and the number of valid deals
+        let totalInterestRate = 0;
+        let validDealsCount = 0;
+
+        // Loop through each deal and add the interest rate to the total
+        deals.forEach(deal => {
+            if (deal.loanDetails && deal.loanDetails.interest_term && deal.loanDetails.interest_term.interest_rate) {
+                totalInterestRate += deal.loanDetails.interest_term.interest_rate;
+                validDealsCount++;
+            }
+        });
+
+        // If no valid deals are found, return an error
+        if (validDealsCount === 0) {
+            return res.status(404).send({ error: "No deals with valid interest rates found" })
+        }
+
+        const averageInterestRate = totalInterestRate / validDealsCount;
+        
+        res.send({ 
+            averageInterestRate: averageInterestRate,
+            totalDeals: deals.length,
+            dealsWithInterestRates: validDealsCount
+        });
+
+    } catch (err) {
+        res.status(500).send({ error: err.message })
     }
 })
 
