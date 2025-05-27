@@ -77,7 +77,7 @@ router.get('/collateral/:id', auth, async (req, res) => {
         });
 
         if (!collateral) {
-            res.status(404).send({error: "No collateral found with that ID"})
+            return res.status(404).send({error: "No collateral found with that ID"})
         } 
 
         // Restrict access to the borrower only
@@ -115,7 +115,7 @@ router.get('/admin/collateral', auth, adminOnly, async (req, res) => {
 
         res.send(collateral)
     } catch (err) {
-        res.status(500).send({ error: err.message })
+        return res.status(500).send({ error: err.message })
     }
 })
 
@@ -137,7 +137,7 @@ router.get('/admin/collateral/total', auth, adminOnly, async (req, res) => {
         res.send({TotalValueCollateralHeld: totalCollateral})
 
     } catch (err) {
-        res.status(400).send({ error: err.message})
+        return res.status(400).send({ error: err.message})
     }
 })
 
@@ -168,7 +168,7 @@ router.get('/admin/collateral/:id', auth, adminOnly, async (req, res) => {
 
         res.send(collateral)
     } catch (err) {
-        res.status(500).send({ error: err.message })
+        return res.status(500).send({ error: err.message })
     }
 });
 
@@ -185,10 +185,10 @@ async function update(req, res) {
 
         const updatedCollateral = await Collateral.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' })
 
-        res.send(updatedCollateral)
+        return res.send(updatedCollateral)
 
     } catch (err) {
-        res.status(400).send({ error: err.message})
+        return res.status(400).send({ error: err.message})
     }
 };
 router.put('/admin/collateral/:id', auth, adminOnly, update);
@@ -205,13 +205,13 @@ router.post('/admin/collateral/:id/release', auth, adminOnly, async (req, res) =
 
         // If doesn't exist, let user know that the collateral doesn't exist
         if (!collateral) {
-            res.status(404).send({ error: `Collateral with id ${collateral} not found`})
+            return res.status(404).send({ error: `Collateral with id ${collateral} not found`})
         }
 
         // Check to see if collateral has already been released or forfeited,
         // if it has, let the user know
         if (collateral.status === "released" || collateral.status === "forfeited") {
-            res.status(409).send({ error: `Collateral has already been ${collateral.status}.`})
+            return res.status(409).send({ error: `Collateral has already been ${collateral.status}.`})
         }
         
         // Get the collateral amount in the collateral save to a variable
@@ -220,25 +220,25 @@ router.post('/admin/collateral/:id/release', auth, adminOnly, async (req, res) =
         // Find related Deal
         const deal = await Deal.findById(collateral.deal_id)
         if (!deal) {
-            res.status(404).send({error: "Deal not found for the collateral"})
+            return res.status(404).send({error: "Deal not found for the collateral"})
         }
 
         // Find related LoanRequest
         const loanRequest = await LoanRequest.findById(deal.loanDetails);
         if (!loanRequest) {
-            res.status(404).send({error: "Loan Request not found for this deal"})
+            return res.status(404).send({error: "Loan Request not found for this deal"})
         }
 
         // Find the borrower (user who created the loan request)
         const borrower = await User.findById(loanRequest.borrower_id)
         if (!borrower) {
-            res.status(404).send({error: "Borrower not found to return collateral to"})
+            return res.status(404).send({error: "Borrower not found to return collateral to"})
         };
 
         // Credit the collateral amount to the user's wallet
         const wallet = await Wallet.findOne({ userId: borrower._id })
         if (!wallet) {
-            res.status(404).send({error: "Wallet not found for the borrower"})
+            return res.status(404).send({error: "Wallet not found for the borrower"})
         }
 
         wallet.balance += collateralAmount
