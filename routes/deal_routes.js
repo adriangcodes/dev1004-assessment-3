@@ -131,9 +131,8 @@ router.post('/deals', auth, async (req, res) => {
     // Update wallet
     await Wallet.findOneAndUpdate(
       { userId: borrowerId, cryptoType: cryptoId },
-      { $inc: { balance: cryptoAmount } },
-      { new: true, upsert: true }
-    );
+      { $inc: { balance: cryptoAmount } }
+    )
 
     // Create deal instance
     const deal = await Deal.create(bodyData);
@@ -142,7 +141,7 @@ router.post('/deals', auth, async (req, res) => {
     await Collateral.create({
       deal_id: deal._id,
       amount: cryptoAmount
-    });
+    })
 
     // Trigger transaction repayment schedule
     await Transaction.generateRepaymentSchedule(deal._id)
