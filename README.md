@@ -1,146 +1,209 @@
-# SatoshiFund
+# P2P Crypto Lending Backend
 
-This is the back-end component of our group project for Coder Academy DEV1003 – Advanced Applications Assignment 2.
+A secure and efficient backend system for peer-to-peer cryptocurrency lending, built with Node.js and Express. Developed as part of Coder Academy's Web Development Unit (DEV1003) - Assessment 2.
 
-SatoshiFund is a back-end API built for a peer-to-peer cryptocurrency lending platform. It enables users to create wallets, list and manage cryptocurrencies, initiate loan requests, and facilitate crypto-backed lending deals. Developed with Node.js, Express, and MongoDB, the app prioritizes modular architecture, secure authentication (via JWT), and robust error handling. Mongoose provides schema validation and clean data modeling. The platform uses RESTful principles to deliver predictable endpoints and supports role-based access control to protect sensitive operations.
+## Overview
 
-Built as part of a collaborative full-stack project, SatoshiFund showcases scalable backend design and practical implementation of modern web development best practices.
+This project is a backend web service that powers a peer-to-peer cryptocurrency lending platform. It enables users to securely lend and borrow crypto assets, manage collateral, and track deals and transactions. The app simulates core lending workflows and adheres to industry-standard practices for authentication, data validation, and route protection.
 
----
+### Features
+- User registration and login with JWT authentication
+- Wallet creation and management
+- Submit and browse loan requests
+- Accept and manage loan deals
+- Upload and validate crypto collateral
+- Track and manage transactions
+- Admin-specific access controls
 
-## 🔧 Technologies Used
+## Current Limitations
 
-### Runtime & Framework
-- **Node.js**: JavaScript runtime for server-side development.
-- **Express (v5)**: Web framework used for route handling and middleware.
-- **MongoDB** with **Mongoose**: NoSQL database with schema modeling via Mongoose.
+While the system provides a complete flow from user registration through deal acceptance and transaction generation, please note the following limitations:
 
-### Security & Auth
-- **jsonwebtoken**: Used for JWT-based authentication.
-- **express-jwt**: Middleware for protecting routes with JWT verification.
-- **bcrypt**: Password hashing for secure user authentication.
-- **helmet**: Secures HTTP headers.
-- **cors**: Enables Cross-Origin Resource Sharing.
+- Loan repayment functionality is not implemented in the current version
+- The system is currently configured for development/testing environments
+- Frontend integration is limited to localhost:5173
+- Real cryptocurrency transactions are not implemented (simulated for demonstration)
 
-### Environment & Utilities
-- **dotenv**: Loads environment variables from `.env` files.
-- **nodemon** (`dev` only): Auto-restarts server during development.
+## Tech Stack
 
----
+- Runtime: Node.js
+- Framework: Express.js
+- Database: MongoDB (hosted on MongoDB Atlas)
+- Authentication: JWT (JSON Web Token)
+- Security: Helmet, CORS, Cookie-Parser
+- Environment Management: dotenv
+- Testing: Jest, Supertest
 
-## ⚙️ Hardware Requirements
+## Prerequisites
 
-- Node.js 18+ installed
-- MongoDB (local or Atlas)
-- 4GB+ RAM and internet access for package install and API functionality
+- Node.js (v14 or higher)
+- MongoDB
+- npm or yarn
 
----
+## Installation
 
-## 📐 Style Guide
-
-This project follows the [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript) via ESLint (configurable). Adherence ensures clean, readable, and maintainable code.
-
----
-
-## 🔁 DRY Principle
-
-- Modular architecture across routes, controllers, and models
-- Common logic abstracted into middleware and utility helpers
-
----
-
-## 🔐 Secure API Design
-
-- Routes follow RESTful conventions with correct HTTP verbs
-- Token-based auth using JWT stored in headers
-- Headers, body, and param validation across all major endpoints
-- Sensitive routes protected via `express-jwt`
-
----
-
-## ✅ Testing
-
-While test coverage is pending final implementation, the `test` script placeholder is configured in `package.json` for future Jest or Supertest integration.
-
+1. Clone the repository:
+```bash
+git clone https://github.com/SatoshiFundAus/dev1003-p2p-crypto-lending-backend
+cd dev1003-p2p-crypto-lending-backend
 ```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Create a `.env` file in the root directory with the following variables:
+```env
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+PORT=8080
+```
+
+4. Start the server:
+```bash
+npm start
+```
+
+The server will start on port 8080 by default.
+
+## API Endpoints
+
+### User Management
+- POST /users/register
+  - Register a new user
+  - Body: `{ email, password, firstName, lastName }`
+  - Returns: User object with JWT token
+
+- POST /users/login
+  - Authenticate user
+  - Body: `{ email, password }`
+  - Returns: User object with JWT token
+
+- GET /users/profile
+  - Get authenticated user's profile
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: User profile object
+
+### Loan Requests
+- POST /loan-requests
+  - Create a new loan request
+  - Headers: `Authorization: Bearer <token>`
+  - Body: `{ amount, currency, term, interestRate, collateralType }`
+  - Returns: Created loan request object
+
+- GET /loan-requests
+  - List all loan requests
+  - Headers: `Authorization: Bearer <token>`
+  - Query params: `status`, `currency`, `minAmount`, `maxAmount`
+  - Returns: Array of loan request objects
+
+- GET /loan-requests/:id
+  - Get specific loan request details
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: Loan request object with full details
+
+### Deals
+- POST /deals
+  - Create a new lending deal
+  - Headers: `Authorization: Bearer <token>`
+  - Body: `{ loanRequestId, lenderId, terms }`
+  - Returns: Created deal object
+
+- GET /deals
+  - List all deals
+  - Headers: `Authorization: Bearer <token>`
+  - Query params: `status`, `userId`
+  - Returns: Array of deal objects
+
+- GET /deals/:id
+  - Get specific deal details
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: Deal object with full details
+
+### Collateral
+- POST /collateral
+  - Add cryptocurrency collateral
+  - Headers: `Authorization: Bearer <token>`
+  - Body: `{ dealId, amount, cryptocurrency }`
+  - Returns: Created collateral object
+
+- GET /collateral
+  - List all collateral
+  - Headers: `Authorization: Bearer <token>`
+  - Query params: `dealId`, `status`
+  - Returns: Array of collateral objects
+
+- GET /collateral/:id
+  - Get specific collateral details
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: Collateral object with full details
+
+### Transactions
+- POST /transactions
+  - Create a new transaction
+  - Headers: `Authorization: Bearer <token>`
+  - Body: `{ dealId, type, amount, cryptocurrency }`
+  - Returns: Created transaction object
+
+- GET /transactions
+  - List all transactions
+  - Headers: `Authorization: Bearer <token>`
+  - Query params: `dealId`, `type`, `status`
+  - Returns: Array of transaction objects
+
+- GET /transactions/:id
+  - Get specific transaction details
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: Transaction object with full details
+
+### Error Responses
+All endpoints may return the following error responses:
+- 400 Bad Request: Invalid input data
+- 401 Unauthorized: Missing or invalid authentication
+- 403 Forbidden: Insufficient permissions
+- 404 Not Found: Resource not found
+- 500 Internal Server Error: Server-side error
+
+## Security Features
+
+- JWT-based authentication
+- Helmet security headers
+- CORS protection
+- Input validation
+- Secure password hashing via bcrypt
+- Protected routes via user authorisation
+
+## Development
+
+### Running Tests
+```bash
 npm test
 ```
 
----
+### Code Style
+The project follows ESLint configuration for consistent code style.
 
-## 🧪 Error Handling
+## Contributing
 
-- Custom middleware captures and responds to errors gracefully
-- Uses HTTP status codes and informative error messages
-- Missing resource, unauthorized access, and validation errors handled consistently
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
----
+## Team
 
-## 📄 Licensing
+This project was developed as a collaborative effort by:
 
-The following packages are used under their respective licenses:
+### Tyson Williams
+- [GitHub Profile](https://github.com/TysonPWilliams)
+- [LinkedIn](https://www.linkedin.com/in/tyson-williams-13273760)
 
-- **express**, **mongoose**, **dotenv**, **jsonwebtoken**, **helmet**: MIT
-- **express-jwt**: MIT
-- **bcrypt**: ISC
-- Project license: ISC
+### Adrian Gidaro
+- [GitHub Profile](https://github.com/adriangcodes)
+- [LinkedIn](https://www.linkedin.com/in/adriangidaro)
 
----
+## License
 
-## 🧭 Alternatives Considered
-
-| Tool         | Alternative   | Reason Chosen                      |
-|--------------|---------------|------------------------------------|
-| MongoDB      | PostgreSQL    | Flexible schema for early-stage dev |
-| Express      | Fastify       | Simplicity and broad community     |
-| JWT          | OAuth         | Lightweight for our API scope      |
-
----
-
-## 📂 Setup Instructions
-
-1. Clone the repo:
-   ```
-   git clone https://github.com/SatoshiFundAus/dev1003-p2p-crypto-lending-backend.git
-   cd dev1003-p2p-crypto-lending-tracker
-   ```
-
-2. Install dependencies:
-   ```
-   npm install
-   ```
-
-3. Create a `.env` file:
-   ```
-   JWT_SECRET="satoshi"
-   MONGODB_URI=your_mongodb_uri
-   ```
-
-4. Run in dev mode:
-   ```
-   npm run dev
-   ```
-
----
-
-## 👥 Team & Collaboration
-
-This project was built collaboratively as part of the DEV1003 assessment. Contributions were tracked via GitHub and coordinated using branches and pull requests. Each team member is also submitting a peer review reflecting individual input.
-
-Team members:
-- Tyson Williams: https://github.com/TysonPWilliams
-- Adrian Gidaro: https://github.com/adriangcodes 
-
----
-
-## Project References
-
-Chandan, D. 2023, Building a strong Node.js controller-based folder structure, Medium, viewed 18 May 2025, https://developerchandan.medium.com/building-a-strong-node-js-controller-based-folder-structure-a96c90ae667c.
-
-Gyawali, V. 2023, Mastering Mongoose pre-hooks: A guide to enhancing data manipulation, Medium, viewed 18 May 2025, https://medium.com/@vikramgyawali57/mastering-mongoose-pre-hooks-a-guide-to-enhancing-data-manipulation-efbec44fc66f.
-
-Kumar, F. 2023, Mastering Express.js controllers: The key to clean and scalable applications, Medium, viewed 18 May 2025, https://medium.com/@finnkumar6/mastering-express-js-controllers-the-key-to-clean-and-scalable-applications-45e35f206d0b.
-
-Manalad, J. 2019, ‘Pre-save hooks in Mongoose.js’, Medium, viewed 18 May 2025, https://medium.com/@justinmanalad/pre-save-hooks-in-mongoose-js-cf1c0959dba2.
-
-Mongoose 2024, Mongoose documentation, Mongoose, viewed 17 May 2025, https://mongoosejs.com/docs/
+This project is licensed under the MIT License - see the LICENSE file for details.
