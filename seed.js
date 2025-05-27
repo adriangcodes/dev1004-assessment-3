@@ -21,14 +21,20 @@ const users = [
         isAdmin: true
     },
     {
-        // walletId: 'ABCD87654321',
         email: 'hodl@satoshi.com',
         password: await bcrypt.hash('1Password', 10)
     },
     {
-        // walletId: '1122334455AB',
         email: 'degen@daytrade.com',
         password: await bcrypt.hash('2thamoon!', 10)
+    },
+    {
+        email: 'memecoins@amc.com',
+        password: await bcrypt.hash('1loveEthereum!', 10)
+    },
+    {
+        email: 'nayib@elsal.com',
+        password: await bcrypt.hash('ElSalvador1!', 10)
     }
 ]
 
@@ -85,6 +91,22 @@ const loanRequest = [
         cryptocurrency: c[0]._id,
         request_date: Date.now(),
         expiry_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+    },
+    {
+        borrower_id: u[3]._id,
+        request_amount: 0.1,
+        interest_term: i[0]._id,
+        cryptocurrency: c[0]._id,
+        request_date: Date.now(),
+        expiry_date: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days from now
+    },
+    {
+        borrower_id: u[3]._id,
+        request_amount: 1,
+        interest_term: i[2]._id,
+        cryptocurrency: c[0]._id,
+        request_date: Date.now(),
+        expiry_date: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days from now
     }
 ]
 
@@ -97,23 +119,23 @@ await Deal.deleteMany()
 console.log('Deals have been erased')
 
 // Deal seed data
-const deals = [
-    {
-        lenderId: u[0]._id, // admin user as lender
-        loanDetails: lr[0]._id, // reference to the loan request
-        isComplete: false
-    },
-    {
-        lenderId: u[1]._id, // hodl@satoshi.com as lender
-        loanDetails: lr[0]._id, // reference to the loan request
-        isComplete: true
-    },
-    {
-        lenderId: u[0]._id, // admin user as lender again
-        loanDetails: lr[0]._id, // reference to the loan request
-        isComplete: false
-    }
-]
+// const deals = [
+//     {
+//         lenderId: u[0]._id, // admin user as lender
+//         loanDetails: lr[0]._id, // reference to the loan request
+//         isComplete: false
+//     },
+//     {
+//         lenderId: u[1]._id, // hodl@satoshi.com as lender
+//         loanDetails: lr[0]._id, // reference to the loan request
+//         isComplete: true
+//     },
+//     {
+//         lenderId: u[0]._id, // admin user as lender again
+//         loanDetails: lr[0]._id, // reference to the loan request
+//         isComplete: false
+//     }
+// ]
 
 const d = await Deal.create(deals);
 console.log('Deals have been created')
@@ -137,6 +159,16 @@ const wallet = [
         userId: u[2]._id,
         cryptoType: c[0]._id,
         balance: 2.51242
+    },
+    {
+        userId: u[3]._id,
+        cryptoType: c[0]._id,
+        balance: 1.11111
+    },
+    {
+        userId: u[4]._id,
+        cryptoType: c[0]._id,
+        balance: 10000
     }
 ]
 await Wallet.deleteMany()
