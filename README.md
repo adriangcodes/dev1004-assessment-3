@@ -206,4 +206,4 @@ This project was developed as a collaborative effort by:
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - please see [LICENSE](docs/LICENSE.md) file for details.
