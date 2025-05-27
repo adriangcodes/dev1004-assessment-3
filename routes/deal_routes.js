@@ -211,6 +211,40 @@ router.get('/admin/deals-complete', auth, adminOnly, async (req, res) => {
     }
 })
 
+// ADMIN - Get all information of active deals
+router.get('/admin/deals-active', auth, adminOnly, async (req, res) => {
+    try {
+        // Get all deals that are active
+        const deals = await Deal.find({isComplete: false})
+            .populate({
+                path: 'loanDetails',
+                select: 'request_amount borrower_id', // request_amount is the loan amount
+                populate: {
+                    path: 'borrower_id',
+                    select: 'email'
+                }
+            })
+            .populate({
+                path: 'lenderId',
+                select: 'email'
+            })
+            
+        const activeDealsInfo = deals.map(deal => ({
+            dealId: deal._id,
+            borrowerEmail: deal.loanDetails?.borrower_id?.email,
+            lenderEmail: deal.lenderId?.email,
+            amount: deal.loanDetails?.request_amount,
+            expectedCompletionDate: deal.expectedCompletionDate,
+            dealStatus: deal.isComplete ? 'Complete' : 'Active'
+        }))
+
+        res.send(activeDealsInfo)
+        
+    } catch (err) {
+        res.status(400).send({ error: err.message })
+    }
+})
+
 // ADMIN - Get total number of deals active
 router.get('/admin/deals-incomplete', auth, adminOnly, async (req, res) => {
     try {
