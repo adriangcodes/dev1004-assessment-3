@@ -74,18 +74,23 @@ router.post('/login', async (req, res) => {
 })
 
 // ADMIN Route - Get All Users
-router.get('/users', auth, adminOnly, async (req, res) => {
+router.get('/admin/users', auth, adminOnly, async (req, res) => {
     try {
         const users = await User.find()
         if (!users) {
             return res.status(404).send({ error: "No Users Found" })
         }
 
-        res.send(users)
+        const formattedUsers = users.map(user => ({
+            userId: user._id,
+            email: user.email,
+            isAdmin: user.isAdmin || false,
+            isActive: user.isActive !== false
+        }))
+        return res.send(formattedUsers)
 
     } catch (err) {
-
-        res.status(500).send({ error: err.message })
+        return res.status(500).send({ error: err.message })
     }
 })
 
