@@ -277,7 +277,7 @@ This project was developed as a collaborative effort by:
 
 ### Tyson Williams
 - [GitHub Profile](https://github.com/TysonPWilliams)
-- [LinkedIn](https://www.linkedin.com/in/tyson-williams-13273760)
+- [LinkedIn](https://www.linkedin.com/in/tysonpwilliams/)
 
 ### Adrian Gidaro
 - [GitHub Profile](https://github.com/adriangcodes)
