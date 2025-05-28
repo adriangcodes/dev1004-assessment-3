@@ -314,3 +314,15 @@ Please consult each package’s official repository for full license details.
 This project benefits from using open-source packages with permissive licenses such as MIT and BSD. These licenses grant broad rights to use, modify, and distribute the software with minimal obligations — typically just crediting the original authors. This flexibility is ideal for academic, experimental, and commercial development alike.
 
 MongoDB is licensed under the Server Side Public License (SSPL), which permits use, modification, and distribution of the database software. For developers hosting their own applications that use MongoDB — including commercial platforms — the SSPL imposes no special obligations. However, if a service provider modifies and offers MongoDB as a service to others, they are required to publicly release their full service-side source code. Our use of MongoDB is limited to backend data handling for this project and does not involve redistributing it as a managed service, so the SSPL presents no constraints on our development or deployment.
+
+## Project References
+
+Chandan, D. 2023, Building a strong Node.js controller-based folder structure, Medium, viewed 18 May 2025, https://developerchandan.medium.com/building-a-strong-node-js-controller-based-folder-structure-a96c90ae667c.
+
+Gyawali, V. 2023, Mastering Mongoose pre-hooks: A guide to enhancing data manipulation, Medium, viewed 18 May 2025, https://medium.com/@vikramgyawali57/mastering-mongoose-pre-hooks-a-guide-to-enhancing-data-manipulation-efbec44fc66f.
+
+Kumar, F. 2023, Mastering Express.js controllers: The key to clean and scalable applications, Medium, viewed 18 May 2025, https://medium.com/@finnkumar6/mastering-express-js-controllers-the-key-to-clean-and-scalable-applications-45e35f206d0b.
+
+Manalad, J. 2019, ‘Pre-save hooks in Mongoose.js’, Medium, viewed 18 May 2025, https://medium.com/@justinmanalad/pre-save-hooks-in-mongoose-js-cf1c0959dba2.
+
+Mongoose 2024, Mongoose documentation, Mongoose, viewed 17 May 2025, https://mongoosejs.com/docs/
