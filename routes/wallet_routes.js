@@ -1,8 +1,7 @@
 import { Router } from "express";   
 import { auth, adminOnly } from "../auth.js";
 import Wallet from "../models/wallet.js"
-import User from "../models/user.js"
-import Cryptocurrency from "../models/cryptocurrency.js";
+
 
 const router = Router()
 router.use(auth)
