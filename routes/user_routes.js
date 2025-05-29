@@ -4,8 +4,6 @@ import jwt from 'jsonwebtoken'
 
 import User from '../models/user.js'
 import { adminOnly, auth } from '../auth.js'
-import Wallet from '../models/wallet.js'
-import Deal from '../models/deal.js'
 
 const secret = process.env.JWT_SECRET
 const router = Router()
