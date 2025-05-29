@@ -248,9 +248,10 @@ npm test
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+3. Add your changes (`git add .`)
+4. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+5. Push to the branch (`git push origin feature/AmazingFeature`)
+6. Open a Pull Request
 
 ## Technology Decisions and Alternatives
 
@@ -276,7 +277,7 @@ This project was developed as a collaborative effort by:
 
 ### Tyson Williams
 - [GitHub Profile](https://github.com/TysonPWilliams)
-- [LinkedIn](https://www.linkedin.com/in/tyson-williams-13273760)
+- [LinkedIn](https://www.linkedin.com/in/tysonpwilliams/)
 
 ### Adrian Gidaro
 - [GitHub Profile](https://github.com/adriangcodes)
