@@ -27,7 +27,7 @@ app.get('/health', (req, res) => {
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: 'http://localhost:5173',         // Frontend origin - Production only until we have a url for our front-end
+  origin: ['http://localhost:5173', 'https://dev1003-p2p-crypto-lending-backend.onrender.com'],         // Frontend origin - Production only until we have a url for our front-end
   credentials: true,                       // Allow credentials (e.g. Authorization headers)
   allowedHeaders: ['Content-Type', 'Authorization'], // Allow JWTs in headers
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
