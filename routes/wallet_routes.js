@@ -124,7 +124,7 @@ router.delete('/wallets', auth, async (req, res) => {
         let wallet = await Wallet.findOne({userId: walletUserId})
 
         if (!wallet) {
-            return res.status(404).send({ error : `Wallet with id ${walletId} not found.`})
+            return res.status(404).send({ error : `Wallet with id ${wallet._id} not found.`})
         }
 
         // Wallet is first checked of funds
