@@ -49,7 +49,13 @@ app.use(cryptocurrency_routes)
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    return res.status(err.status || 500).send({error: err.message});
+
+    // Check if response has already been sent
+    if (res.headersSent) {
+      return next(err);
+    }
+
+    return res.status(err.status || 500).send({error: err.message})
 });
 
 app.listen(port, async () => {
