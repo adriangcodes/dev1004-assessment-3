@@ -1,7 +1,5 @@
 import { Router } from "express" 
-
 import { auth, adminOnly } from "../auth.js"
-
 import Deal from "../models/deal.js"
 import User from "../models/user.js"
 import LoanRequest from "../models/loan_request.js"
@@ -12,24 +10,55 @@ import Transaction from "../models/transaction.js"
 const router = Router()
 router.use(auth)
 
-// Get all User's Deals
-router.get('/user-deals', auth, async (req, res) => {
+// Get all deals where the user is the lender
+router.get('/lender-deals', auth, async (req, res) => {
     try {
-        const userId = req.auth.id;
+        const userId = req.auth.id
+
         const deals = await Deal.find({ lenderId: userId })
-            .populate('lenderId')
             .populate({
                 path: 'loanDetails',
-                select: '-__v -_id -expiry_date'
-            });
+                select: 'request_amount borrower_id interest_term status'
+            })
+            .populate({
+                path: 'lenderId',
+                select: 'email'
+            })
 
         if (!deals || deals.length === 0) {
-            return res.status(404).send({ message: "Deals not found for this user" });
+            return res.status(404).json({ message: "No deals found where you are the lender." })
         }
 
-        return res.send(deals);
-    } catch (err) {
-        return res.status(500).send({ error: err.message });
+        return res.status(200).json(deals)
+    } catch (error) {
+        console.error('Error fetching lender deals:', error)
+        return res.status(500).json({ error: 'Failed to fetch lender deals.' })
+    }
+})
+
+// Get all deals where the user is the borrower
+router.get('/borrower-deals', auth, async (req, res) => {
+    try {
+        const userId = req.auth.id
+
+        const deals = await Deal.find({ 'loanDetails.borrower_id': userId })
+            .populate({
+                path: 'loanDetails',
+                select: 'request_amount borrower_id interest_term status'
+            })
+            .populate({
+                path: 'lenderId',
+                select: 'email'
+            })
+
+        if (!deals || deals.length === 0) {
+            return res.status(404).json({ message: "No deals found where you are the borrower." });
+        }
+
+        return res.status(200).json(deals);
+    } catch (error) {
+        console.error('Error fetching borrower deals:', error)
+        return res.status(500).json({ error: 'Failed to fetch borrower deals.' })
     }
 })
 
