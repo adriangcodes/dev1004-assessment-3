@@ -129,7 +129,7 @@ router.delete('/wallets/', auth, async (req, res) => {
 
         // Wallet is first checked of funds
         if (wallet.balance === 0) {
-            wallet = await Wallet.findByIdAndDelete(walletId)
+            wallet = await Wallet.findOneAndDelete({userId: walletUserId})
             return res.status(200).send({ message: 'Wallet deleted successfully'})
 
         } else {
