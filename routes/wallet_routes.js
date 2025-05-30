@@ -115,16 +115,28 @@ async function update(req, res) {
 router.put('/wallets', auth, update)
 router.patch('/wallets', auth, update)
 
-// Delete wallet (admin only)
-router.delete('/wallets/:id', auth, adminOnly, async (req, res) => {
+// Delete wallet (auth)
+router.delete('/wallets/', auth, async (req, res) => {
     try {
-        const walletId = req.params.id
-        const wallet = await Wallet.findByIdAndDelete(walletId)
-        if (wallet) {
-            res.status(200).send({ message: 'Wallet deleted successfully.' })
-        } else {
-            res.status(404).send({ error: `Wallet with id ${walletId} not found.` })
+        const walletUserId = req.auth.id
+
+        
+        let wallet = await Wallet.findOne({userId: walletUserId})
+
+        if (!wallet) {
+            return res.status(404).send({ error : `Wallet with id ${walletId} not found.`})
         }
+
+        // Wallet is first checked of funds
+        if (wallet.balance === 0) {
+            wallet = await Wallet.findOneAndDelete({userId: walletUserId})
+            return res.status(200).send({ message: 'Wallet deleted successfully'})
+
+        } else {
+            return res.status(409).send({ error: `Cannot delete wallet as funds are still available. Withdraw First`, walletBalance: `${wallet.balance}`})
+        }
+
+
     } catch (err) {
         res.status(400).send({ error: err.message })
     }
