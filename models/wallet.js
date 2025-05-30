@@ -9,7 +9,6 @@ const walletSchema = new Schema({
     cryptoType: {
         type: Schema.Types.ObjectId,
         ref: 'Cryptocurrency', // Ensure this matches the model name
-        required: true
     },
     balance: {
         type: Number,
