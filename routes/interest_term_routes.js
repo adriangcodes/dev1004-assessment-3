@@ -4,7 +4,7 @@ import InterestTerm from "../models/interest_term.js"
 import Deal from "../models/deal.js"
 
 const router = Router()
-router.use(auth)
+
 
 // Get all interest terms (authorised user only)
 router.get('/interest-terms', auth, async (req, res) => {

@@ -4,7 +4,7 @@ import Wallet from "../models/wallet.js"
 
 
 const router = Router()
-router.use(auth)
+
 
 // Get all wallets from all users (admin only)
 router.get('/wallets', auth, adminOnly, async (req, res) => {

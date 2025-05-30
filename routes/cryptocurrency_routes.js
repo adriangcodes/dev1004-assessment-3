@@ -3,7 +3,7 @@ import { auth, adminOnly } from "../auth.js";
 import Cryptocurrency from "../models/cryptocurrency.js";
 
 const router = Router()
-router.use(auth)
+
 
 // Get all cryptocurrencies (authorised user only)
 router.get('/crypto', auth, async (req, res) => {

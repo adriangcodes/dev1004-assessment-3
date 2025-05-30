@@ -10,7 +10,7 @@ import Collateral from "../models/collateral.js"
 import Transaction from "../models/transaction.js"
 
 const router = Router()
-router.use(auth)
+
 
 // Get all User's Deals
 router.get('/user-deals', auth, async (req, res) => {
