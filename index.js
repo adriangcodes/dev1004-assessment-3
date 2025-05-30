@@ -13,7 +13,6 @@ import wallet_routes from './routes/wallet_routes.js'
 import interest_term_routes from './routes/interest_term_routes.js'
 import transaction_routes from './routes/transaction_routes.js'
 import cryptocurrency_routes from './routes/cryptocurrency_routes.js'
-import { MongoNotConnectedError } from 'mongodb'
 
 // console.log(process.env) // Check if environment variables are loaded correctly
 
@@ -53,7 +52,7 @@ app.use((err, req, res, next) => {
 
     // Check if response has already been sent
     if (res.headersSent) {
-      return MongoNotConnectedError(err);
+      return next(err);
     }
 
     return res.status(err.status || 500).send({error: err.message})
