@@ -126,7 +126,7 @@ router.get('/admin/collateral/total', auth, adminOnly, async (req, res) => {
         const collaterals = await Collateral.find({status: "locked"})
 
         if (!collaterals || collaterals.length === 0) {
-            res.send({TotalValueCollateralHeld: 0})
+            return res.send({TotalValueCollateralHeld: 0})
         }
         
         let totalCollateral = 0;
@@ -134,7 +134,7 @@ router.get('/admin/collateral/total', auth, adminOnly, async (req, res) => {
             totalCollateral += c.amount
         }
 
-        res.send({TotalValueCollateralHeld: totalCollateral})
+        return res.send({TotalValueCollateralHeld: totalCollateral})
 
     } catch (err) {
         return res.status(400).send({ error: err.message})
