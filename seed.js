@@ -148,7 +148,7 @@ const wallet = [
     {
         userId: u[0]._id,
         cryptoType: c[0]._id,
-        balance: 20.2
+        balance: 20.20000000
     },
     {
         userId: u[1]._id,
@@ -158,17 +158,17 @@ const wallet = [
     {
         userId: u[2]._id,
         cryptoType: c[0]._id,
-        balance: 2.51242
+        balance: 2.51242000
     },
     {
         userId: u[3]._id,
         cryptoType: c[0]._id,
-        balance: 1.11111
+        balance: 1.11111000
     },
     {
         userId: u[4]._id,
         cryptoType: c[0]._id,
-        balance: 10000
+        balance: 10000.00000000
     }
 ]
 await Wallet.deleteMany()
