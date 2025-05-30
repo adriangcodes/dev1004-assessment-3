@@ -1,7 +1,6 @@
 import { Router } from "express" 
-
 import { auth, adminOnly } from "../auth.js"
-
+import mongoose from 'mongoose'
 import Deal from "../models/deal.js"
 import User from "../models/user.js"
 import LoanRequest from "../models/loan_request.js"
@@ -12,24 +11,28 @@ import Transaction from "../models/transaction.js"
 const router = Router()
 router.use(auth)
 
-// Get all User's Deals
+// Get all deals for a logged-in user (a)
 router.get('/user-deals', auth, async (req, res) => {
     try {
-        const userId = req.auth.id;
+        // Get the logged-in user's ID
+        const userId = req.auth.id
+
+        // Find all deals where the user is the lender
         const deals = await Deal.find({ lenderId: userId })
-            .populate('lenderId')
             .populate({
                 path: 'loanDetails',
-                select: '-__v -_id -expiry_date'
-            });
+                select: 'request_amount borrower_id interest_term status'
+            })
+            .populate({
+                path: 'lenderId',
+                select: 'email'
+            })
 
-        if (!deals || deals.length === 0) {
-            return res.status(404).send({ message: "Deals not found for this user" });
-        }
-
-        return res.send(deals);
-    } catch (err) {
-        return res.status(500).send({ error: err.message });
+        // Return the deals
+        return res.status(200).json(deals)
+    } catch (error) {
+        console.error('Error fetching user deals:', error);
+        return res.status(500).json({ error: 'Failed to fetch user deals' })
     }
 })
 
