@@ -82,6 +82,12 @@ router.post('/wallets', auth, async (req, res) => {
     }
  })
 
+
+// Helper function
+function formatBalance(amount) {
+    // Round to 8 decimal places and remove trailing zeros
+    return parseFloat(parseFloat(amount).toFixed(8));
+}
 // Deposit Funds (authorised user only)
 async function update(req, res) {
     try {
@@ -97,17 +103,18 @@ async function update(req, res) {
         let updateBalance = req.body.fundsDeposited
 
         // Update the wallet to now have the new fundsDeposited
-        updateBalance += wallet.balance
+        updateBalance = formatBalance(updateBalance + wallet.balance)
         
         const updatedWallet = await Wallet.findByIdAndUpdate(
             wallet._id,
-            { balance: updateBalance},
-            { returnDocument: 'after'})
+            { balance: formatBalance(updateBalance) },
+            { returnDocument: 'after'}
+        )
 
-        res.send(updatedWallet)
+        return res.send(updatedWallet)
 
     } catch (err) {
-        res.status(400).send({ error: err.message })
+        return res.status(400).send({ error: err.message })
     }
 }
 
