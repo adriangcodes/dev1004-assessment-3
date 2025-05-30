@@ -85,10 +85,10 @@ router.get('/collateral/:id', auth, async (req, res) => {
             return res.status(403).send({error: "Unauthorised access to this collateral"})
         }
 
-        res.send(collateral)
+        return res.send(collateral)
         
     } catch (err) {
-        res.status(400).send({ error: err.message})
+        return res.status(400).send({ error: err.message})
     }
 })
 

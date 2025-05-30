@@ -13,6 +13,7 @@ import wallet_routes from './routes/wallet_routes.js'
 import interest_term_routes from './routes/interest_term_routes.js'
 import transaction_routes from './routes/transaction_routes.js'
 import cryptocurrency_routes from './routes/cryptocurrency_routes.js'
+import { MongoNotConnectedError } from 'mongodb'
 
 // console.log(process.env) // Check if environment variables are loaded correctly
 
@@ -49,7 +50,13 @@ app.use(cryptocurrency_routes)
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    return res.status(err.status || 500).send({error: err.message});
+
+    // Check if response has already been sent
+    if (res.headersSent) {
+      return MongoNotConnectedError(err);
+    }
+
+    return res.status(err.status || 500).send({error: err.message})
 });
 
 app.listen(port, async () => {
