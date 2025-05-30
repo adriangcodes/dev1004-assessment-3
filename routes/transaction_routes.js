@@ -6,7 +6,7 @@ import Deal from "../models/deal.js"
 import Wallet from "../models/wallet.js"
 
 const router = Router()
-router.use(auth)
+
 
 // Get all transactions from all users (admin only)
 router.get('/transactions', auth, adminOnly, async (req, res) => {

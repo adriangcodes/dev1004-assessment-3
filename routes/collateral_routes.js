@@ -7,7 +7,7 @@ import LoanRequest from '../models/loan_request.js';
 import Wallet from '../models/wallet.js';
 
 const router = Router();
-router.use(auth)
+
 
 // Create a new collateral entry (admin only)
 router.post('/admin/collateral', auth, adminOnly, async (req, res) => {

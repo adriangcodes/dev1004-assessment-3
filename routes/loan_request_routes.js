@@ -6,7 +6,7 @@ import InterestTerm from "../models/interest_term.js";
 import Wallet from "../models/wallet.js"
 
 const router = Router();
-router.use(auth)
+
 
 // Create a new loan request (authorised user only)
 router.post("/loan-requests", auth, async (req, res) => {

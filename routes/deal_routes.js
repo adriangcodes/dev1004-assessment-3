@@ -8,7 +8,7 @@ import Collateral from "../models/collateral.js"
 import Transaction from "../models/transaction.js"
 
 const router = Router()
-router.use(auth)
+
 
 // Get all deals where the user is the lender
 router.get('/lender-deals', auth, async (req, res) => {
