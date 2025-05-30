@@ -195,6 +195,11 @@ router.put('/admin/collateral/:id', auth, adminOnly, update);
 router.patch('/admin/collateral/:id', auth, adminOnly, update);
 
 
+// Helper Function
+function formatBalance(amount) {
+    // Round to 8 decimal places and remove trailing zeros
+    return parseFloat(parseFloat(amount).toFixed(8));
+}
 
 // ADMIN Route - Release or Refund Collateral after deal completion
 router.post('/admin/collateral/:id/release', auth, adminOnly, async (req, res) => {
@@ -241,7 +246,7 @@ router.post('/admin/collateral/:id/release', auth, adminOnly, async (req, res) =
             return res.status(404).send({error: "Wallet not found for the borrower"})
         }
 
-        wallet.balance += collateralAmount
+        wallet.balance = formatBalance(wallet.balance + collateralAmount)
         await wallet.save()
 
         // Update the collateral and deal
