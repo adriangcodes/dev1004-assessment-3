@@ -118,28 +118,6 @@ console.log('Loan Requests have been created')
 await Deal.deleteMany()
 console.log('Deals have been erased')
 
-// Deal seed data
-// const deals = [
-//     {
-//         lenderId: u[0]._id, // admin user as lender
-//         loanDetails: lr[0]._id, // reference to the loan request
-//         isComplete: false
-//     },
-//     {
-//         lenderId: u[1]._id, // hodl@satoshi.com as lender
-//         loanDetails: lr[0]._id, // reference to the loan request
-//         isComplete: true
-//     },
-//     {
-//         lenderId: u[0]._id, // admin user as lender again
-//         loanDetails: lr[0]._id, // reference to the loan request
-//         isComplete: false
-//     }
-// ]
-
-const d = await Deal.create(deals);
-console.log('Deals have been created')
-
 await Collateral.deleteMany()
 console.log('Collateral has been erased')
 
