@@ -116,7 +116,7 @@ router.put('/wallets', auth, update)
 router.patch('/wallets', auth, update)
 
 // Delete wallet (auth)
-router.delete('/wallets/', auth, async (req, res) => {
+router.delete('/wallets', auth, async (req, res) => {
     try {
         const walletUserId = req.auth.id
 
