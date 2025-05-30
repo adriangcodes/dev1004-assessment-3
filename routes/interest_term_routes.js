@@ -51,7 +51,7 @@ router.get('/admin/average-interest-rate', auth, adminOnly, async (req, res) => 
         
         // Calculate the average interest rate
         if (!deals || deals.length === 0) {
-            return res.status(404).send({ error: "No deals found" })
+            return res.status(200).send({ message: "No deals found", averageInterestRate: 0})
         }
         // Initialize variables to store the total interest rate and the number of valid deals
         let totalInterestRate = 0;
@@ -67,19 +67,19 @@ router.get('/admin/average-interest-rate', auth, adminOnly, async (req, res) => 
 
         // If no valid deals are found, return an error
         if (validDealsCount === 0) {
-            return res.status(404).send({ error: "No deals with valid interest rates found" })
+            return res.status(200).send({ message: "No deals with valid interest rates found", averageInterestRate: 0 })
         }
 
         const averageInterestRate = totalInterestRate / validDealsCount;
         
-        res.send({ 
+        return res.send({ 
             averageInterestRate: averageInterestRate,
             totalDeals: deals.length,
             dealsWithInterestRates: validDealsCount
         });
 
     } catch (err) {
-        res.status(500).send({ error: err.message })
+        return res.status(500).send({ error: err.message })
     }
 })
 
