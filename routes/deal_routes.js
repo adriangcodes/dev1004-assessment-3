@@ -15,25 +15,21 @@ router.use(auth)
 // Get all User's Deals
 router.get('/user-deals', auth, async (req, res) => {
     try {
-        const userId = req.auth.id
-
-        const deals = await Deal.find({lenderId: userId})
-            .populate([{
+        const userId = req.auth.id;
+        const deals = await Deal.find({ lenderId: userId })
+            .populate('lenderId')
+            .populate({
                 path: 'loanDetails',
                 select: '-__v -_id -expiry_date'
-            },
-            {
-                path: 'lenderId',
-                select: '-__v -_id -password -isAdmin -createdAt -updatedAt'
-            }])
+            });
 
-        if (!deals || deals.length == 0) {
-            return res.status(404).send({message: "Deals not found for this user"})
+        if (!deals || deals.length === 0) {
+            return res.status(404).send({ message: "Deals not found for this user" });
         }
 
-        return res.send(deals)
+        return res.send(deals);
     } catch (err) {
-        return res.status(500).send({ error: err.message})
+        return res.status(500).send({ error: err.message });
     }
 })
 
