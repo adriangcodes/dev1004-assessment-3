@@ -8,6 +8,12 @@ Developed with Node.js, Express, and MongoDB, the app prioritizes modular archit
 
 Built as part of a collaborative full-stack project, SatoshiFund showcases scalable backend design and practical implementation of modern web development best practices.
 
+### Live Backend:  
+The backend is currently live and available at:  
+[https://dev1003-p2p-crypto-lending-backend.onrender.com](https://dev1003-p2p-crypto-lending-backend.onrender.com)  
+All API routes can be tested from this base URL.
+
+
 ### Features
 - User registration and login with JWT authentication
 - Wallet creation and management
@@ -140,7 +146,6 @@ router.get('/example', auth, async (req, res) => {
 
 If this project were to scale, adopting a formal style guide (e.g., ESLint with Airbnb config) would be recommended to enforce uniform code standards and catch potential errors early in development.
 
-### Hosting
 
 ## Installation
 
