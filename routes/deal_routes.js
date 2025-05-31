@@ -46,21 +46,35 @@ router.get('/borrower-deals', auth, async (req, res) => {
     try {
         const userId = req.auth.id
 
-        const deals = await Deal.find({ 'loanDetails.borrower_id': userId })
+        const deals = await Deal.find()
             .populate({
                 path: 'loanDetails',
-                select: 'request_amount borrower_id interest_term status'
+                match: { borrower_id: userId },
+                select: 'request_amount borrower_id interest_term status cryptocurrency',
+                populate: [
+                    {
+                        path: 'interest_term',
+                        select: 'loan_length interest_rate'
+                    },
+                    {
+                        path: 'cryptocurrency',
+                        select: 'symbol name'
+                    }
+                ]
             })
             .populate({
                 path: 'lenderId',
                 select: 'email'
             })
 
-        if (!deals || deals.length === 0) {
+        // Filter out deals where loanDetails is null (due to the match condition)
+        const filteredDeals = deals.filter(deal => deal.loanDetails !== null)
+
+        if (!filteredDeals || filteredDeals.length === 0) {
             return res.status(404).json({ message: "No deals found where you are the borrower." });
         }
 
-        return res.status(200).json(deals);
+        return res.status(200).json(filteredDeals);
     } catch (error) {
         console.error('Error fetching borrower deals:', error)
         return res.status(500).json({ error: 'Failed to fetch borrower deals.' })
