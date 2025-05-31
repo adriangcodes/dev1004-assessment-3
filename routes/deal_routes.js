@@ -192,7 +192,8 @@ router.post('/deals', auth, async (req, res) => {
         // Create collateral instance
         await Collateral.create({
             deal_id: deal._id,
-            amount: cryptoAmount
+            amount: cryptoAmount,
+            status: 'locked'
         })
 
         // Trigger transaction repayment schedule
