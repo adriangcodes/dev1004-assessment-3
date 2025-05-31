@@ -1,9 +1,7 @@
 # P2P Crypto Lending Backend
-
-A secure and efficient backend system for peer-to-peer cryptocurrency lending, built with Node.js and Express. Developed as part of Coder Academy's Web Development Unit (DEV1003) - Assessment 2.
+A secure and efficient backend system for peer-to-peer cryptocurrency lending, built with Node.js and Express.
 
 ## Overview
-
 SatoshiFund is a back-end API built for a peer-to-peer cryptocurrency lending platform. It enables users to securely lend and borrow crypto assets, manage collateral, and track deals and transactions. The app simulates core lending workflows and adheres to industry-standard practices for authentication, data validation, and route protection.
 
 Developed with Node.js, Express, and MongoDB, the app prioritizes modular architecture, secure authentication (via JWT), and robust error handling. Mongoose provides schema validation and clean data modeling. The platform uses RESTful principles to deliver predictable endpoints and supports role-based access control to protect sensitive operations.
@@ -19,14 +17,25 @@ Built as part of a collaborative full-stack project, SatoshiFund showcases scala
 - Track and manage transactions
 - Admin-specific access controls
 
-## Current Limitations
-
+### Current Limitations
 While the system provides a complete flow from user registration through deal acceptance and transaction generation, please note the following limitations:
 
 - Loan repayment functionality is not implemented in the current version
-- The system is currently configured for development/testing environments
-- Frontend integration is limited to localhost:5173
 - Real cryptocurrency transactions are not implemented (simulated for demonstration)
+
+### Future Plans
+- Implementation of loan repayment functionality
+- Addition of user hot wallet functionality and real cryptocurrency transaction support, starting with Bitcoin
+- Enhanced security features, appropriate to a web3 decentralised finance platform
+- Comprehensive logging
+- Implementation of rate limiting
+
+### Github
+This project can be found on [GitHub at the SatoshiFund organisation repo](https://github.com/orgs/SatoshiFundAus/repositories).
+
+### Frontend Integration
+
+This backend is designed to integrate with the React-based frontend, also found above. API requests are secured with JWT-based Authorization headers. CORS is configured to allow requests from the frontend origin.
 
 ## Tech Stack
 
@@ -80,7 +89,7 @@ This project is lightweight and designed to run efficiently on modest hardware. 
 ### Local Development
 - **CPU:** Dual-core processor
 - **RAM:** 4 GB
-- **Storage:** 500 MB free space for codebase and MongoDB data
+- **Storage:** minimum 500 MB free space for codebase and MongoDB data
 - **OS:** macOS, Linux, or Windows
 
 ### Development/Test Server
@@ -99,9 +108,46 @@ This project does not currently handle production-grade transaction throughput o
 
 ## Code Style
 
-While this project does not currently use an automated linter or formatter like ESLint or Prettier, code consistency has been maintained through team conventions and IDE defaults. Variable naming, indentation, and file structure follow widely accepted JavaScript best practices to ensure readability and maintainability.
+This project uses automated code formatting and linting tools to ensure consistency and catch potential errors early during development.
 
-If this project were to scale, adopting a formal style guide (e.g., ESLint with Airbnb config) would be recommended to enforce uniform code standards and catch potential errors early in development.
+### Tools Used
+- **ESLint** with the [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript) — for identifying and fixing problematic patterns in code.
+- **Prettier** — for automatic code formatting (integrated with ESLint to avoid conflicts).
+
+These tools help maintain high code quality, especially in a team setting, by enforcing style rules and eliminating common syntax errors.
+
+### Style Conventions
+The following conventions are enforced:
+
+- Use of ES modules (`import/export`)
+
+- Use ES modules (import/export) syntax
+- 2-space indentation
+- Single quotes for strings
+- Semicolons at the end of statements
+- `camelCase` for variable and function names
+- Async/await syntax for asynchronous operations
+- Consistent use of trailing commas and spacing
+
+Example:
+```javascript
+import { Router } from 'express'
+import { auth } from '../auth.js'
+
+const router = Router()
+
+router.get('/example', auth, async (req, res) => {
+  try {
+    // Implementation
+  } catch (error) {
+    res.status(500).send({ error: error.message })
+  }
+})
+```
+
+The use of these tools supports collaboration and makes the codebase more maintainable as the project scales.
+
+### Hosting
 
 ## Installation
 
@@ -135,7 +181,7 @@ The server will start on port 8080 by default.
 ### User Management
 - POST /users/register
   - Register a new user
-  - Body: `{ email, password, firstName, lastName }`
+  - Body: `{ email, password }`
   - Returns: User object with JWT token
 
 - POST /users/login
@@ -143,40 +189,84 @@ The server will start on port 8080 by default.
   - Body: `{ email, password }`
   - Returns: User object with JWT token
 
-- GET /users/profile
-  - Get authenticated user's profile
+- PUT /user
+  - Update own profile (authorized user only)
   - Headers: `Authorization: Bearer <token>`
-  - Returns: User profile object
+  - Body: User fields to update
+  - Returns: Updated user object
+
+- PUT /users/:id
+  - Update any user (admin only)
+  - Headers: `Authorization: Bearer <token>`
+  - Body: User fields to update
+  - Returns: Updated user object
+
+- DELETE /users/:id
+  - Delete user (admin only)
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: Success message
+
+- GET /admin/users
+  - Get all users (admin only)
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: Array of user objects
 
 ### Loan Requests
 - POST /loan-requests
   - Create a new loan request
   - Headers: `Authorization: Bearer <token>`
-  - Body: `{ amount, currency, term, interestRate, collateralType }`
+  - Body: 
+    ```json
+    {
+      "request_amount": number,
+      "loan_term": number,
+      "cryptocurrency_symbol": string
+    }
+    ```
   - Returns: Created loan request object
 
 - GET /loan-requests
   - List all loan requests
   - Headers: `Authorization: Bearer <token>`
-  - Query params: `status`, `currency`, `minAmount`, `maxAmount`
-  - Returns: Array of loan request objects
+  - Returns: Array of loan request objects with populated fields
 
 - GET /loan-requests/:id
   - Get specific loan request details
   - Headers: `Authorization: Bearer <token>`
   - Returns: Loan request object with full details
 
+- PUT/PATCH /loan-requests/:id
+  - Update loan request (admin only)
+  - Headers: `Authorization: Bearer <token>`
+  - Body: Loan request fields to update
+  - Returns: Updated loan request object
+
+- DELETE /loan-requests/:id
+  - Delete loan request (admin only)
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: Success message
+
 ### Deals
 - POST /deals
   - Create a new lending deal
   - Headers: `Authorization: Bearer <token>`
-  - Body: `{ loanRequestId, lenderId, terms }`
+  - Body: 
+    ```json
+    {
+      "lenderId": string,
+      "loanDetails": string
+    }
+    ```
   - Returns: Created deal object
 
-- GET /deals
-  - List all deals
+- GET /lender-deals
+  - Get all deals where user is the lender
   - Headers: `Authorization: Bearer <token>`
-  - Query params: `status`, `userId`
+  - Returns: Array of deal objects
+
+- GET /borrower-deals
+  - Get all deals where user is the borrower
+  - Headers: `Authorization: Bearer <token>`
   - Returns: Array of deal objects
 
 - GET /deals/:id
@@ -184,17 +274,21 @@ The server will start on port 8080 by default.
   - Headers: `Authorization: Bearer <token>`
   - Returns: Deal object with full details
 
-### Collateral
-- POST /collateral
-  - Add cryptocurrency collateral
+- PUT/PATCH /deals/:id
+  - Update deal (admin only)
   - Headers: `Authorization: Bearer <token>`
-  - Body: `{ dealId, amount, cryptocurrency }`
-  - Returns: Created collateral object
+  - Body: Deal fields to update
+  - Returns: Updated deal object
 
-- GET /collateral
-  - List all collateral
+- DELETE /deals/:id
+  - Delete deal (admin only)
   - Headers: `Authorization: Bearer <token>`
-  - Query params: `dealId`, `status`
+  - Returns: Success message
+
+### Collateral
+- GET /collateral
+  - Get all user's collateral
+  - Headers: `Authorization: Bearer <token>`
   - Returns: Array of collateral objects
 
 - GET /collateral/:id
@@ -202,23 +296,133 @@ The server will start on port 8080 by default.
   - Headers: `Authorization: Bearer <token>`
   - Returns: Collateral object with full details
 
-### Transactions
-- POST /transactions
-  - Create a new transaction
+- GET /admin/collateral
+  - Get all collateral (admin only)
   - Headers: `Authorization: Bearer <token>`
-  - Body: `{ dealId, type, amount, cryptocurrency }`
-  - Returns: Created transaction object
+  - Returns: Array of collateral objects
 
-- GET /transactions
-  - List all transactions
+- GET /admin/collateral/:id
+  - Get specific collateral details (admin only)
   - Headers: `Authorization: Bearer <token>`
-  - Query params: `dealId`, `type`, `status`
+  - Returns: Collateral object with full details
+
+- POST /admin/collateral/:id/release
+  - Release collateral after deal completion (admin only)
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: Success message and updated collateral status
+
+### Transactions
+- GET /transactions
+  - Get all transactions (admin only)
+  - Headers: `Authorization: Bearer <token>`
   - Returns: Array of transaction objects
 
-- GET /transactions/:id
-  - Get specific transaction details
+- GET /transactions/user/:userId
+  - Get all transactions for a specific user
   - Headers: `Authorization: Bearer <token>`
-  - Returns: Transaction object with full details
+  - Returns: Array of transaction objects
+
+- POST /transactions
+  - Create a new transaction (admin only)
+  - Headers: `Authorization: Bearer <token>`
+  - Body: 
+    ```json
+    {
+      "fromUser": string,
+      "toUser": string,
+      "fromWallet": string,
+      "toWallet": string,
+      "dealId": string,
+      "isLoanRepayment": boolean
+    }
+    ```
+  - Returns: Created transaction object or array of repayment schedule transactions
+
+- PUT/PATCH /transactions/:id
+  - Update transaction (admin only)
+  - Headers: `Authorization: Bearer <token>`
+  - Body: Transaction fields to update
+  - Returns: Updated transaction object
+
+- DELETE /transactions/:id
+  - Delete transaction (admin only)
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: Success message
+
+### Interest Terms
+- GET /interest-terms
+  - Get all interest terms
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: Array of interest term objects
+
+- POST /interest-terms
+  - Create new interest term (admin only)
+  - Headers: `Authorization: Bearer <token>`
+  - Body: 
+    ```json
+    {
+      "loan_length": number,
+      "interest_rate": number
+    }
+    ```
+  - Returns: Created interest term object
+
+- PUT/PATCH /interest-terms/:id
+  - Update interest term (admin only)
+  - Headers: `Authorization: Bearer <token>`
+  - Body: Interest term fields to update
+  - Returns: Updated interest term object
+
+- DELETE /interest-terms/:id
+  - Delete interest term (admin only)
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: Success message
+
+### Cryptocurrency
+- GET /crypto
+  - Get all cryptocurrencies
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: Array of cryptocurrency objects
+
+- POST /crypto
+  - Create new cryptocurrency (admin only)
+  - Headers: `Authorization: Bearer <token>`
+  - Body: 
+    ```json
+    {
+      "name": string,
+      "symbol": string
+    }
+    ```
+  - Returns: Created cryptocurrency object
+
+- PUT/PATCH /crypto/:id
+  - Update cryptocurrency (admin only)
+  - Headers: `Authorization: Bearer <token>`
+  - Body: Cryptocurrency fields to update
+  - Returns: Updated cryptocurrency object
+
+- DELETE /crypto/:id
+  - Delete cryptocurrency (admin only)
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: Success message
+
+### Wallets
+- GET /wallets
+  - Get user's wallets
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: Array of wallet objects
+
+- PUT /wallets
+  - Deposit funds into wallet
+  - Headers: `Authorization: Bearer <token>`
+  - Body: Wallet update fields
+  - Returns: Updated wallet object
+
+- DELETE /wallets
+  - Delete wallet (if balance is 0)
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: Success message
 
 ### Error Responses
 All endpoints may return the following error responses:
@@ -226,6 +430,7 @@ All endpoints may return the following error responses:
 - 401 Unauthorized: Missing or invalid authentication
 - 403 Forbidden: Insufficient permissions
 - 404 Not Found: Resource not found
+- 409 Conflict: Operation cannot be completed (e.g., deleting wallet with balance)
 - 500 Internal Server Error: Server-side error
 
 ## Security Features
@@ -239,10 +444,79 @@ All endpoints may return the following error responses:
 
 ## Development
 
-### Running Tests
+### Development Server
+Start the development server with hot reloading:
+```bash
+npm run dev
+```
+
+### Testing
+The project includes comprehensive test coverage for all models using Jest and MongoDB Memory Server. Tests are organized by model.
+
+This project uses Jest as the primary testing framework and MongoDB Memory Server to enable isolated in-memory database testing. Tests are executed in a clean environment with automatic setup and teardown, ensuring database state is reset between runs for consistency and reliability.
+
+To run test files:
 ```bash
 npm test
 ```
+
+#### User Model (`tests/models/user.test.js`)
+- Validates user creation and default values
+- Tests email validation (format, length, case sensitivity)
+- Tests password validation (length, complexity, required fields)
+- Verifies default values for isAdmin and isActive
+- Tests email trimming and case conversion
+
+#### Deal Model (`tests/models/deal.test.js`)
+- Validates deal creation
+- Tests expected completion date calculation
+- Verifies relationship with loan requests
+- Tests validation of required fields
+- Ensures proper handling of loan terms
+
+#### Loan Request Model (`tests/models/loan_request.test.js`)
+- Tests loan request creation
+- Validates request amount (must be positive)
+- Verifies date validations (request date, expiry date)
+- Tests status transitions
+- Validates relationships with users and cryptocurrencies
+
+#### Collateral Model (`tests/models/collateral.test.js`)
+- Tests collateral creation
+- Validates amount requirements
+- Tests status transitions
+- Verifies relationship with deals
+
+#### Wallet Model (`tests/models/wallet.test.js`)
+- Tests wallet creation
+- Validates balance operations
+- Tests cryptocurrency relationships
+- Verifies user associations
+
+#### Interest Term Model (`tests/models/interest_term.test.js`)
+- Tests interest term creation
+- Validates interest rate ranges
+- Tests loan length requirements
+- Verifies term calculations
+
+#### Cryptocurrency Model (`tests/models/cryptocurrency.test.js`)
+- Tests cryptocurrency creation
+- Validates symbol and name requirements
+- Tests uniqueness constraints
+
+### Database Seeding
+The project includes a seed script that populates the database with initial data for testing and development. To use it:
+
+1. Ensure your MongoDB connection is configured
+2. Run:
+```bash
+  npm run seed
+```
+3. The script will create:
+   - Test users (including an admin user)
+   - Sample cryptocurrency data
+   - Interest terms
+   - Loan requests
 
 ## Contributing
 
@@ -273,7 +547,7 @@ These decisions reflect a balance between scalability, learning goals, and time 
 
 ## Team
 
-This project was developed as a collaborative effort by:
+Developed as part of Coder Academy's Advanced Applications Subject (DEV1003) - Assessment 2, as a collaboration between:
 
 ### Tyson Williams
 - [GitHub Profile](https://github.com/TysonPWilliams)
@@ -321,6 +595,8 @@ MongoDB is licensed under the Server Side Public License (SSPL), which permits u
 Chandan, D. 2023, Building a strong Node.js controller-based folder structure, Medium, viewed 18 May 2025, https://developerchandan.medium.com/building-a-strong-node-js-controller-based-folder-structure-a96c90ae667c.
 
 Gyawali, V. 2023, Mastering Mongoose pre-hooks: A guide to enhancing data manipulation, Medium, viewed 18 May 2025, https://medium.com/@vikramgyawali57/mastering-mongoose-pre-hooks-a-guide-to-enhancing-data-manipulation-efbec44fc66f.
+
+indexzero 2014, Node.js process event ‘uncaughtException’ caveats, GitHub Gist, viewed 31 May 2025, https://gist.github.com/indexzero/10602128.
 
 Kumar, F. 2023, Mastering Express.js controllers: The key to clean and scalable applications, Medium, viewed 18 May 2025, https://medium.com/@finnkumar6/mastering-express-js-controllers-the-key-to-clean-and-scalable-applications-45e35f206d0b.
 
