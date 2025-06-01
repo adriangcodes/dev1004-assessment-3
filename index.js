@@ -13,16 +13,10 @@ import wallet_routes from './routes/wallet_routes.js'
 import interest_term_routes from './routes/interest_term_routes.js'
 import transaction_routes from './routes/transaction_routes.js'
 import cryptocurrency_routes from './routes/cryptocurrency_routes.js'
-
-// console.log(process.env) // Check if environment variables are loaded correctly
+import health_routes from './routes/health_routes.js'
 
 const app = express()
 const port = 8080
-
-// This is a health endpoint that can be pinged freely
-app.get('/health', (req, res) => {
-  res.status(200).send('Server is healthy');
-});
 
 // Middleware
 app.use(helmet({
@@ -54,6 +48,7 @@ app.use(cookieParser())
 
 
 // Routes
+app.use(health_routes)
 app.use(user_routes)
 app.use(loan_request_routes)
 app.use(deal_routes)
