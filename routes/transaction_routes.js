@@ -7,7 +7,6 @@ import Wallet from "../models/wallet.js"
 
 const router = Router()
 
-
 // Get all transactions from all users (admin only)
 router.get('/transactions', auth, adminOnly, async (req, res) => {
     try {
@@ -22,27 +21,6 @@ router.get('/transactions', auth, adminOnly, async (req, res) => {
         res.status(500).send({ error: err.message })
     }
 })
-
-// // Get all transaction from a single user (authorised user only)
-// router.get('/transactions/:id', auth, async (req, res) => {
-//     const transactionId = req.params.id
-//     // Fetch the transaction with the given id
-//     try {
-//         const transaction = await Transaction.findById(transactionId)
-//     // Check the transaction exists, if not return error message
-//     if (!transaction) {
-//         return res.status(404).send({ error: `Transaction with id ${transactionId} not found.` })
-//     }
-//     // Check the user is accessing their own transaction data, if not return error message
-//     if (transaction.userId.toString() !== req.user._id.toString()) {
-//         return res.status(403).send({ error: 'Access denied: you are not authorised to view these transactions.' })
-//     }
-//     // Send transaction to client if it satisfies the above criteria
-//     res.send(transaction)
-//     } catch (err) {
-//     res.status(500).send({ error: err.message })
-//     }
-// })
 
 // Get all transactions for a user (authorised user only)
 router.get('/transactions/user/:userId', auth, async (req, res) => {

@@ -23,7 +23,6 @@ router.post('/register', async (req, res) => {
         res.status(201).send({ email: user.email })
     }
     catch (err) {
-        // TODO: Log to error file
         res.status(400).send({ error: err.message })
     }
 })

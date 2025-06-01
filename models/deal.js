@@ -17,7 +17,7 @@ const dealSchema = new Schema({
   },
   expectedCompletionDate: {
     type: Date,
-    // Default will be whatever loan term the lender and borrower agree on
+    // Default is handled by pre-save hook
   }
 }, { timestamps: true })
 
