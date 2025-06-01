@@ -25,14 +25,31 @@ app.get('/health', (req, res) => {
 });
 
 // Middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: true,
+  crossOriginEmbedderPolicy: true,
+  crossOriginOpenerPolicy: true,
+  crossOriginResourcePolicy: true,
+  dnsPrefetchControl: true,
+  frameguard: true,
+  hidePoweredBy: true,
+  hsts: true,
+  ieNoOpen: true,
+  noSniff: true,
+  originAgentCluster: true,
+  permittedCrossDomainPolicies: true,
+  referrerPolicy: true,
+  xssFilter: true
+}));
+
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://dev1003-p2p-crypto-lending-backend.onrender.com'],         // Frontend origin - Production only until we have a url for our front-end
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true,                       // Allow credentials (e.g. Authorization headers)
   allowedHeaders: ['Content-Type', 'Authorization'], // Allow JWTs in headers
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
 }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
 
 
@@ -48,18 +65,17 @@ app.use(cryptocurrency_routes)
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-
-    // Check if response has already been sent
-    if (res.headersSent) {
-      return next(err);
-    }
-
-    return res.status(err.status || 500).send({error: err.message})
+  console.error(err.stack);
+  if (res.headersSent) return next(err);
+  const status = err.status || 500;
+  const message = process.env.NODE_ENV === 'production'
+    ? 'Internal server error'
+    : err.message;
+  return res.status(status).json({ error: message });
 });
 
 app.listen(port, async () => {
-    console.log(`Back-end is listening on port ${port}`)
-    connect()
+  console.log(`Back-end is listening on port ${port}`)
+  connect()
 });
 
