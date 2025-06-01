@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TysonPWilliams/dev1003-p2p-crypto-lending-tracker.git"
+    "url": "git+https://github.com/SatoshiFundAus/dev1003-p2p-crypto-lending-backend.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/TysonPWilliams/dev1003-p2p-crypto-lending-tracker/issues"
+    "url": "https://github.com/SatoshiFundAus/dev1003-p2p-crypto-lending-backend/issues"
   },
-  "homepage": "https://github.com/TysonPWilliams/dev1003-p2p-crypto-lending-tracker#readme",
+  "homepage": "https://github.com/SatoshiFundAus/dev1003-p2p-crypto-lending-backend#readme",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
