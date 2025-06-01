@@ -119,8 +119,7 @@ While this project does not currently use an automated linter or formatter like 
 ### Style Conventions
 The following conventions are enforced:
 
-- Use of ES modules (`import/export`)
-- Use ES modules (import/export) syntax
+- Use of ES modules (`import/export`) syntax
 - 2-space indentation
 - Single quotes for strings
 - Semicolons at the end of statements
@@ -165,7 +164,7 @@ npm install
 MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 PORT=8080
-FRONEND_URL=your_frontend_url
+FRONTEND_URL=your_frontend_url
 ```
 
 4. Start the server:
