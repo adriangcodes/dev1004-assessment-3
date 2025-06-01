@@ -34,16 +34,16 @@ app.use(helmet({
   permittedCrossDomainPolicies: true,
   referrerPolicy: true,
   xssFilter: true
-}));
+}))
 
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true,                       // Allow credentials (e.g. Authorization headers)
   allowedHeaders: ['Content-Type', 'Authorization'], // Allow JWTs in headers
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-}));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+}))
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 
 
@@ -67,10 +67,9 @@ app.use((err, req, res, next) => {
     ? 'Internal server error'
     : err.message;
   return res.status(status).json({ error: message });
-});
+})
 
 app.listen(port, async () => {
   console.log(`Back-end is listening on port ${port}`)
   connect()
-});
-
+})

@@ -176,19 +176,37 @@ The server will start on port 8080 by default.
 
 ## API Endpoints
 
-### User Management
-- POST /users/register
+### Authentication
+- POST /register
   - Register a new user
-  - Body: `{ email, password }`
-  - Returns: User object with JWT token
+  - Body: 
+    ```json
+    {
+      "email": "string",
+      "password": "string"
+    }
+    ```
+  - Returns: User object with email
 
-- POST /users/login
-  - Authenticate user
-  - Body: `{ email, password }`
-  - Returns: User object with JWT token
+- POST /login
+  - Login user
+  - Body: 
+    ```json
+    {
+      "email": "string",
+      "password": "string"
+    }
+    ```
+  - Returns: JWT token and user info
+
+### User Management
+- GET /admin/users
+  - Get all users (admin only)
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: Array of user objects
 
 - PUT /user
-  - Update own profile (authorized user only)
+  - Update own profile
   - Headers: `Authorization: Bearer <token>`
   - Body: User fields to update
   - Returns: Updated user object
@@ -204,11 +222,6 @@ The server will start on port 8080 by default.
   - Headers: `Authorization: Bearer <token>`
   - Returns: Success message
 
-- GET /admin/users
-  - Get all users (admin only)
-  - Headers: `Authorization: Bearer <token>`
-  - Returns: Array of user objects
-
 ### Loan Requests
 - POST /loan-requests
   - Create a new loan request
@@ -217,8 +230,8 @@ The server will start on port 8080 by default.
     ```json
     {
       "request_amount": number,
-      "loan_term": number,
-      "cryptocurrency_symbol": string
+      "interest_term": string (ObjectId),
+      "cryptocurrency": string (ObjectId)
     }
     ```
   - Returns: Created loan request object
@@ -226,12 +239,12 @@ The server will start on port 8080 by default.
 - GET /loan-requests
   - List all loan requests
   - Headers: `Authorization: Bearer <token>`
-  - Returns: Array of loan request objects with populated fields
+  - Returns: Array of loan request objects
 
 - GET /loan-requests/:id
-  - Get specific loan request details
+  - Get specific loan request
   - Headers: `Authorization: Bearer <token>`
-  - Returns: Loan request object with full details
+  - Returns: Loan request object
 
 - PUT/PATCH /loan-requests/:id
   - Update loan request (admin only)
@@ -251,8 +264,8 @@ The server will start on port 8080 by default.
   - Body: 
     ```json
     {
-      "lenderId": string,
-      "loanDetails": string
+      "lenderId": string (ObjectId),
+      "loanDetails": string (ObjectId)
     }
     ```
   - Returns: Created deal object
@@ -268,9 +281,9 @@ The server will start on port 8080 by default.
   - Returns: Array of deal objects
 
 - GET /deals/:id
-  - Get specific deal details
+  - Get specific deal
   - Headers: `Authorization: Bearer <token>`
-  - Returns: Deal object with full details
+  - Returns: Deal object
 
 - PUT/PATCH /deals/:id
   - Update deal (admin only)
@@ -284,57 +297,45 @@ The server will start on port 8080 by default.
   - Returns: Success message
 
 ### Collateral
+- POST /admin/collateral
+  - Create new collateral (admin only)
+  - Headers: `Authorization: Bearer <token>`
+  - Body: 
+    ```json
+    {
+      "deal_id": string (ObjectId),
+      "amount": number,
+      "status": string
+    }
+    ```
+  - Returns: Created collateral object
+
 - GET /collateral
   - Get all user's collateral
   - Headers: `Authorization: Bearer <token>`
   - Returns: Array of collateral objects
 
 - GET /collateral/:id
-  - Get specific collateral details
+  - Get specific collateral
   - Headers: `Authorization: Bearer <token>`
-  - Returns: Collateral object with full details
+  - Returns: Collateral object
 
-- GET /admin/collateral
-  - Get all collateral (admin only)
+- PUT/PATCH /admin/collateral/:id
+  - Update collateral (admin only)
   - Headers: `Authorization: Bearer <token>`
-  - Returns: Array of collateral objects
-
-- GET /admin/collateral/:id
-  - Get specific collateral details (admin only)
-  - Headers: `Authorization: Bearer <token>`
-  - Returns: Collateral object with full details
-
-- POST /admin/collateral/:id/release
-  - Release collateral after deal completion (admin only)
-  - Headers: `Authorization: Bearer <token>`
-  - Returns: Success message and updated collateral status
+  - Body: Collateral fields to update
+  - Returns: Updated collateral object
 
 ### Transactions
 - GET /transactions
-  - Get all transactions (admin only)
+  - Get all transactions
   - Headers: `Authorization: Bearer <token>`
   - Returns: Array of transaction objects
 
-- GET /transactions/user/:userId
-  - Get all transactions for a specific user
+- GET /transactions/:id
+  - Get specific transaction
   - Headers: `Authorization: Bearer <token>`
-  - Returns: Array of transaction objects
-
-- POST /transactions
-  - Create a new transaction (admin only)
-  - Headers: `Authorization: Bearer <token>`
-  - Body: 
-    ```json
-    {
-      "fromUser": string,
-      "toUser": string,
-      "fromWallet": string,
-      "toWallet": string,
-      "dealId": string,
-      "isLoanRepayment": boolean
-    }
-    ```
-  - Returns: Created transaction object or array of repayment schedule transactions
+  - Returns: Transaction object
 
 - PUT/PATCH /transactions/:id
   - Update transaction (admin only)
@@ -348,22 +349,27 @@ The server will start on port 8080 by default.
   - Returns: Success message
 
 ### Interest Terms
+- POST /interest-terms
+  - Create new interest term
+  - Headers: `Authorization: Bearer <token>`
+  - Body: 
+    ```json
+    {
+      "interest_rate": number,
+      "loan_length": number
+    }
+    ```
+  - Returns: Created interest term object
+
 - GET /interest-terms
   - Get all interest terms
   - Headers: `Authorization: Bearer <token>`
   - Returns: Array of interest term objects
 
-- POST /interest-terms
-  - Create new interest term (admin only)
+- GET /interest-terms/:id
+  - Get specific interest term
   - Headers: `Authorization: Bearer <token>`
-  - Body: 
-    ```json
-    {
-      "loan_length": number,
-      "interest_rate": number
-    }
-    ```
-  - Returns: Created interest term object
+  - Returns: Interest term object
 
 - PUT/PATCH /interest-terms/:id
   - Update interest term (admin only)
@@ -377,13 +383,8 @@ The server will start on port 8080 by default.
   - Returns: Success message
 
 ### Cryptocurrency
-- GET /crypto
-  - Get all cryptocurrencies
-  - Headers: `Authorization: Bearer <token>`
-  - Returns: Array of cryptocurrency objects
-
 - POST /crypto
-  - Create new cryptocurrency (admin only)
+  - Create new cryptocurrency
   - Headers: `Authorization: Bearer <token>`
   - Body: 
     ```json
@@ -393,6 +394,16 @@ The server will start on port 8080 by default.
     }
     ```
   - Returns: Created cryptocurrency object
+
+- GET /crypto
+  - Get all cryptocurrencies
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: Array of cryptocurrency objects
+
+- GET /crypto/:id
+  - Get specific cryptocurrency
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: Cryptocurrency object
 
 - PUT/PATCH /crypto/:id
   - Update cryptocurrency (admin only)
@@ -406,21 +417,32 @@ The server will start on port 8080 by default.
   - Returns: Success message
 
 ### Wallets
+- POST /wallets
+  - Create new wallet
+  - Headers: `Authorization: Bearer <token>`
+  - Body: 
+    ```json
+    {
+      "cryptocurrency": string (ObjectId)
+    }
+    ```
+  - Returns: Created wallet object
+
 - GET /wallets
-  - Get user's wallets
+  - Get all user's wallets
   - Headers: `Authorization: Bearer <token>`
   - Returns: Array of wallet objects
 
-- PUT /wallets
-  - Deposit funds into wallet
+- PUT/PATCH /wallets
+  - Update wallet balance
   - Headers: `Authorization: Bearer <token>`
-  - Body: Wallet update fields
+  - Body: Wallet fields to update
   - Returns: Updated wallet object
 
-- DELETE /wallets
-  - Delete wallet (if balance is 0)
-  - Headers: `Authorization: Bearer <token>`
-  - Returns: Success message
+### Health Check
+- GET /health
+  - Check API health status
+  - Returns: Status object
 
 ### Error Responses
 All endpoints may return the following error responses:
