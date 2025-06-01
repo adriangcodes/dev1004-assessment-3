@@ -176,7 +176,7 @@ The server will start on port 8080 by default.
 
 ## API Endpoints
 
-### Authentication
+### Authentication & User Management
 - POST /register
   - Register a new user
   - Body: 
