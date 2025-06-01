@@ -13,16 +13,10 @@ import wallet_routes from './routes/wallet_routes.js'
 import interest_term_routes from './routes/interest_term_routes.js'
 import transaction_routes from './routes/transaction_routes.js'
 import cryptocurrency_routes from './routes/cryptocurrency_routes.js'
-
-// console.log(process.env) // Check if environment variables are loaded correctly
+import health_routes from './routes/health_routes.js'
 
 const app = express()
 const port = 8080
-
-// This is a health endpoint that can be pinged freely
-app.get('/health', (req, res) => {
-  res.status(200).send('Server is healthy');
-});
 
 // Middleware
 app.use(helmet({
@@ -40,20 +34,21 @@ app.use(helmet({
   permittedCrossDomainPolicies: true,
   referrerPolicy: true,
   xssFilter: true
-}));
+}))
 
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true,                       // Allow credentials (e.g. Authorization headers)
   allowedHeaders: ['Content-Type', 'Authorization'], // Allow JWTs in headers
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-}));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+}))
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 
 
 // Routes
+app.use(health_routes)
 app.use(user_routes)
 app.use(loan_request_routes)
 app.use(deal_routes)
@@ -72,10 +67,9 @@ app.use((err, req, res, next) => {
     ? 'Internal server error'
     : err.message;
   return res.status(status).json({ error: message });
-});
+})
 
 app.listen(port, async () => {
   console.log(`Back-end is listening on port ${port}`)
   connect()
-});
-
+})

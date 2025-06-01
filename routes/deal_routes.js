@@ -85,8 +85,6 @@ router.get('/borrower-deals', auth, async (req, res) => {
 router.get('/deals', auth, adminOnly, async (req, res) => {
     try {
         const deals = await Deal
-            // Draft query string returns all deals, otherwise only incomplete deals are shown
-            // .find(req.query.draft ? {} : { isComplete: false })
             .find()
             // Populates info from loan_request and user models
             .populate([{
@@ -310,6 +308,5 @@ router.get('/admin/deals-incomplete', auth, adminOnly, async (req, res) => {
         res.status(400).send({ error: err.message })
     }
 })
-
 
 export default router

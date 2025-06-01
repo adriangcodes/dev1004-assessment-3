@@ -27,7 +27,7 @@ const transactionSchema = new Schema({
   amount: {
     type: Number,
     min: [0, 'Transaction amount cannot be negative.'],
-    // Max limit set based on initial operation of Bitcoin only
+    // Max limit set based on initial operation of Bitcoin only - coin limit of 21 million
     max: [21000000, 'Amount cannot exceed 21 million.'],
     validate: {
       // Validates amount entry to ensure it has a maximum of 8 decimal places, and that a numeral features before the decimal place (ie. 0.5 not .5)
@@ -51,10 +51,8 @@ const transactionSchema = new Schema({
   }
 }, { timestamps: true })
 
-//Pre-save hook to generate transaction based on an associated dealId
-// The admin user is involved as this simulates the platform holding crypto
-// on behalf of the lender and disbursing it once the deal is active. This 
-// simulates an escrow-style or trustless-intermediary pattern.
+// Pre-save hook to generate transaction based on an associated dealId
+// The admin user is involved as this simulates the platform holding crypto on behalf of the lender and disbursing it once the deal is active. This simulates an escrow-style or trustless-intermediary pattern.
 transactionSchema.statics.generateRepaymentSchedule = async function (dealId) {
   const deal = await Deal.findById(dealId).populate({
     path: 'loanDetails',
@@ -107,7 +105,6 @@ transactionSchema.statics.generateRepaymentSchedule = async function (dealId) {
 
   const admin = await User.findOne({ isAdmin: true })
   const borrowerWallet = await Wallet.findOne({ userId: borrower })
-
 
   if (!admin || !borrowerWallet) throw new Error('Admin or borrower wallet not found')
   
