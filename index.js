@@ -37,7 +37,10 @@ app.use(helmet({
 }))
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: [
+    'http://localhost:5173',
+    ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : [])
+  ],  
   credentials: true,                       // Allow credentials (e.g. Authorization headers)
   allowedHeaders: ['Content-Type', 'Authorization'], // Allow JWTs in headers
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
