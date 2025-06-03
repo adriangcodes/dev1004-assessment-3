@@ -30,6 +30,10 @@ const userSchema = new Schema({
   isActive: {
     type: Boolean,
     default: true
+  },
+  hasLoggedIn: {
+    type: Boolean,
+    default: false
   }
 }, { timestamps: true })
 
