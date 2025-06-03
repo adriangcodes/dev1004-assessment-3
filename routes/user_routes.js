@@ -39,6 +39,14 @@ router.post('/login', async (req, res) => {
                 return res.status(401).send({ error: "Invalid Credentials" })
             }
 
+            // Check if this is the first login for the user
+            const isFirstLogin = !user.hasLoggedIn;
+
+            if (!user.hasLoggedIn) {
+                user.hasLoggedIn = true;
+                await user.save()
+            }
+
             const token = jwt.sign({ id: user._id, email: user.email, isAdmin: user.isAdmin }, process.env.JWT_SECRET, {
                 expiresIn: '1h'
             });
@@ -50,7 +58,12 @@ router.post('/login', async (req, res) => {
                 maxAge: 1000 * 60 * 60 // 1 Hour
             })
 
-            res.send({ token, email: user.email, isAdmin: user.isAdmin })
+            res.send({ 
+                token, 
+                email: user.email, 
+                isAdmin: user.isAdmin,
+                isFirstLogin: isFirstLogin
+             })
         } else {
             res.status(404).send({ error: 'Email or password incorrect.' })
         }
