@@ -1,0 +1,23 @@
+name: SatoshiFund Backend
+services:
+  api:
+    image: satoshifund-backend:latest-${NODE_ENV}
+    build: .
+    env_file: .env
+    # environment overwrites .env file
+    environment:
+    # Interpolated variables can have a fallback value using ":-"
+      - DATABASE_URL=mongodb://mongo:27017/satoshifunddb-${NODE_ENV:-defaultenvironment}
+      - JWT_SECRET=satoshi
+      - FRONTEND_URL=your_frontend_url
+    ports:
+      - 5432:8080
+  mongo:
+    image: mongo
+    volumes:
+      - satoshifund-data:/data/db
+    ports:
+      - 54321:27017
+volumes:
+  mongodb-data:
+    driver: local
