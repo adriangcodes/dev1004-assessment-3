@@ -1,6 +1,3 @@
-# Specifies version of Docker Compose file format
-version: "3.8"
-
 name: SatoshiFund Backend
 
 services:
@@ -9,7 +6,8 @@ services:
     build: .
     container_name: satoshifund-api
     restart: unless-stopped
-    depends_on: mongo
+    depends_on:
+    - mongo
     env_file: .env
     # environment overwrites .env file
     environment:
@@ -18,16 +16,21 @@ services:
       - JWT_SECRET=satoshi
       - FRONTEND_URL=your_frontend_url
       - NODE_ENV=development
-    ports: "8080:8080"
-    networks: satoshifund-net
+    ports:
+    - "8080:8080"
+    networks:
+    - satoshifund-net
   
   mongo:
     image: mongo:latest
     container_name: satoshifund-mongo
     restart: unless-stopped
-    volumes: satoshifund-data:/data/db
-    ports: "27017:27017"
-    networks: satoshifund-net
+    volumes:
+    - satoshifund-data:/data/db
+    ports:
+    - "27017:27017"
+    networks:
+    - satoshifund-net
 
 # Defines volume for persistent MongoDB data
 volumes:
