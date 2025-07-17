@@ -2,7 +2,7 @@
 # 
 # Uses official Node.js image, version 22, using a lightweight version of Linux
 # 'slim' variant means it's Debian-based but stripped down (smaller size)
-#   - Good balance of functionality and size
+#   - Good balance of functionality and attack surface
 #   - Smaller than 'node:22' (full image), but more flexible than alpine
 # Still includes essential build tools (unlike alpine which may require workarounds)
 # Maintained by Node.js and Docker Library maintainers — trusted source, stable and secure
