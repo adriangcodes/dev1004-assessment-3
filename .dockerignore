@@ -20,3 +20,20 @@ docs/
 # Test files
 tests/
 jest.config.js
+
+# Logs
+logs
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Build artifacts (if any)
+dist/
+build/
+coverage/
+
+# Cache
+.cache/
+npm-cache/

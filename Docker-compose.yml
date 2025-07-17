@@ -1,21 +1,24 @@
+# Defines project name
 name: SatoshiFund Backend
 
 services:
   api:
-    image: satoshifund-backend:latest-${NODE_ENV}
+    # The image name is built dynamically from environment variables, with defaults for local development
+    image: ${DOCKER_USER:-adriangcodes}/satoshifund-backend:${IMAGE_TAG:-v1.0.0-${NODE_ENV:-development}}
     build: .
     container_name: satoshifund-api
     restart: unless-stopped
     depends_on:
     - mongo
+    # Loads variables from the .env file
     env_file: .env
-    # environment overwrites .env file
+    # Variables set here will take precedence over those in the .env file
     environment:
-    # Interpolated variables can have a fallback value using ":-"
       - MONGODB_URI=mongodb://mongo:27017/satoshifunddb-${NODE_ENV:-development}
-      - JWT_SECRET=satoshi
-      - FRONTEND_URL=your_frontend_url
-      - NODE_ENV=development
+      - NODE_ENV=${NODE_ENV:-development}
+      # Following variables are securely sourced from .env
+      - JWT_SECRET=${JWT_SECRET}
+      - FRONTEND_URL=${FRONTEND_URL}
     ports:
     - "8080:8080"
     networks:
