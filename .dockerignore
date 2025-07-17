@@ -1,1 +1,4 @@
 ./node_modules/
+./docs/dev1003/
+./docs/dev1004/
+.env.example
