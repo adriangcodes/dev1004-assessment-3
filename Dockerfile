@@ -1,17 +1,12 @@
-FROM node:alpine
+FROM node:22-slim
 
-COPY package*.json README.md seed.js db.js auth.js ./
-
-COPY docs/LICENSE.md ./docs/
-
-COPY models ./models/
-
-COPY routes ./routes/
-
+# Copy package.json and install dependencies first
+COPY package*.json ./
 RUN npm install
 
-CMD ["npm", "run", "dev"]
+# Copy all other files
+COPY . .
 
-# CMD ["npm", "run", "seed"]
+CMD ["npm", "run", "dev"]
 
 EXPOSE 8080
