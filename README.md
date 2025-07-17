@@ -689,6 +689,12 @@ Kumar, F. 2023, Mastering Express.js controllers: The key to clean and scalable 
 
 Manalad, J. 2019, ‘Pre-save hooks in Mongoose.js’, Medium, viewed 18 May 2025, https://medium.com/@justinmanalad/pre-save-hooks-in-mongoose-js-cf1c0959dba2.
 
+massivebrains (2020) Use Same Dockerfile for Dev & Production, DEV Community. Available at: https://dev.to/massivebrains/use-same-dockerfile-for-dev-production-1l7f (Accessed: 17 July 2025).
+
 Mongoose 2024, Mongoose documentation, Mongoose, viewed 17 May 2025, https://mongoosejs.com/docs/
 
 Naqeeb, M. (2022). Dockerizing a Node.js and Express.js App. [online] Medium. Available at: https://medium.com/@muhammadnaqeeb/dockerizing-a-node-js-and-express-js-app-9cb31cf9139e [Accessed 17 Jul. 2025].
+
+Stack Overflow (2017) How to configure different Dockerfile for development and production?, Stack Overflow. Available at: https://stackoverflow.com/questions/46440909/how-to-configure-different-dockerfile-for-development-and-production (Accessed: 17 July 2025).
+
+Wilson, R. (2023) 6 Docker Compose Best Practices for Dev and Prod, Release. Available at: https://release.com/blog/6-docker-compose-best-practices-for-dev-and-prod (Accessed: 17 July 2025).
