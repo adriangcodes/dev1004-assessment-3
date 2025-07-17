@@ -1,4 +1,22 @@
-./node_modules/
-./docs/dev1003/
-./docs/dev1004/
+# Git and Docker files
+.git/
+.gitignore
+.dockerignore
+Dockerfile
+Docker-compose.yml
+
+# Node.js dependencies
+node_modules/
+npm-debug.log
+
+# Environment files
+.env
 .env.example
+
+# Docs and README
+README.md
+docs/
+
+# Test files
+tests/
+jest.config.js
