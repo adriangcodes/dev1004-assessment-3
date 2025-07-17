@@ -37,7 +37,9 @@ While the system provides a complete flow from user registration through deal ac
 - Implementation of rate limiting
 
 ### Github
-This project can be found on [GitHub at the SatoshiFund organisation repo](https://github.com/orgs/SatoshiFundAus/repositories).
+The original project can be found on [GitHub at the SatoshiFund organisation repo](https://github.com/orgs/SatoshiFundAus/repositories).
+
+This fork, featuring the containerized version of the application is available at: [https://github.com/adriangcodes/dev1004-assessment1-backend](https://github.com/adriangcodes/dev1004-assessment1-backend).
 
 ### Frontend Integration
 
@@ -153,6 +155,7 @@ If this project were to scale, adopting a formal style guide (e.g., ESLint with 
 git clone https://github.com/SatoshiFundAus/dev1003-p2p-crypto-lending-backend
 cd dev1003-p2p-crypto-lending-backend
 ```
+>> Note: the above GitHub repo is the original project code. For the containerised version, please see **Running with Docker** below.
 
 2. Install dependencies:
 ```bash
@@ -173,6 +176,64 @@ npm start
 ```
 
 The server will start on port 8080 by default.
+
+## Running with Docker
+
+For a consistent and isolated development environment, you can run the application using Docker and Docker Compose. This is the recommended method for getting started quickly.
+
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+### Setup and Commands
+
+1.  **Clone the Repository**
+
+    If you haven't already, clone the project to your local machine:
+    ```bash
+    git clone https://github.com/adriangcodes/dev1004-assessment1-backend
+    cd dev1003-p2p-crypto-lending-backend
+    ```
+    >> Note: the above GitHub repo is forked from the original project file and features the containerised version of the application.
+
+2.  **Build and Start Services**
+
+    From the root of the project, run the following command. This will build the API image and start both the Node.js API and MongoDB containers.
+    ```bash
+    docker-compose up --build
+    ```
+    To run the services in the background (detached mode), use the `-d` flag:
+    ```bash
+    docker-compose up -d --build
+    ```
+    The API will be accessible at **`http://localhost:8080`**.
+
+3.  **Seed the Database**
+
+    With the containers running, you can seed the database with initial data by executing the seed script inside the `api` container:
+    ```bash
+    docker-compose exec api npm run seed
+    ```
+
+4.  **View Logs**
+
+    To view the real-time logs from all running services, use:
+    ```bash
+    docker-compose logs -f
+    ```
+    To view logs for a specific service (e.g. the API):
+    ```bash
+    docker-compose logs -f api
+    ```
+
+5.  **Stop the Services**
+
+    When you are finished, stop and remove the containers and network with:
+    ```bash
+    docker-compose down
+    ```
+    Your database data will be preserved in a Docker volume, so it will be available the next time you start the services.
 
 ## API Endpoints
 
@@ -577,6 +638,8 @@ Developed as part of Coder Academy's Advanced Applications Subject (DEV1003) - A
 - [GitHub Profile](https://github.com/adriangcodes)
 - [LinkedIn](https://www.linkedin.com/in/adriangidaro)
 
+The containerised version of the project is the sole creation of Adrian Gidaro for DEV1004 DevOps Assessment 1: Containerise an Existing Application.
+
 ## License
 
 This project is licensed under the MIT License - please see [LICENSE](docs/LICENSE.md) file for details.
@@ -614,6 +677,10 @@ MongoDB is licensed under the Server Side Public License (SSPL), which permits u
 
 Chandan, D. 2023, Building a strong Node.js controller-based folder structure, Medium, viewed 18 May 2025, https://developerchandan.medium.com/building-a-strong-node-js-controller-based-folder-structure-a96c90ae667c.
 
+Docker. (2021). 9 tips for containerizing your Node.js application. [online] Docker Blog. Available at: https://www.docker.com/blog/9-tips-for-containerizing-your-node-js-application/ [Accessed 17 Jul. 2025].
+
+GeeksforGeeks. (n.d.). How to Dockerize an ExpressJS App?. [online] Available at: https://www.geeksforgeeks.org/linux-unix/how-to-dockerize-an-expressjs-app/ [Accessed 17 Jul. 2025].
+
 Gyawali, V. 2023, Mastering Mongoose pre-hooks: A guide to enhancing data manipulation, Medium, viewed 18 May 2025, https://medium.com/@vikramgyawali57/mastering-mongoose-pre-hooks-a-guide-to-enhancing-data-manipulation-efbec44fc66f.
 
 indexzero 2014, Node.js process event ‘uncaughtException’ caveats, GitHub Gist, viewed 31 May 2025, https://gist.github.com/indexzero/10602128.
@@ -623,3 +690,5 @@ Kumar, F. 2023, Mastering Express.js controllers: The key to clean and scalable 
 Manalad, J. 2019, ‘Pre-save hooks in Mongoose.js’, Medium, viewed 18 May 2025, https://medium.com/@justinmanalad/pre-save-hooks-in-mongoose-js-cf1c0959dba2.
 
 Mongoose 2024, Mongoose documentation, Mongoose, viewed 17 May 2025, https://mongoosejs.com/docs/
+
+Naqeeb, M. (2022). Dockerizing a Node.js and Express.js App. [online] Medium. Available at: https://medium.com/@muhammadnaqeeb/dockerizing-a-node-js-and-express-js-app-9cb31cf9139e [Accessed 17 Jul. 2025].

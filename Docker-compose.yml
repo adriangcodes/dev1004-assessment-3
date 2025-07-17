@@ -1,0 +1,43 @@
+name: SatoshiFund Backend
+
+services:
+  api:
+    image: satoshifund-backend:latest-${NODE_ENV}
+    build: .
+    container_name: satoshifund-api
+    restart: unless-stopped
+    depends_on:
+    - mongo
+    env_file: .env
+    # environment overwrites .env file
+    environment:
+    # Interpolated variables can have a fallback value using ":-"
+      - MONGODB_URI=mongodb://mongo:27017/satoshifunddb-${NODE_ENV:-development}
+      - JWT_SECRET=satoshi
+      - FRONTEND_URL=your_frontend_url
+      - NODE_ENV=development
+    ports:
+    - "8080:8080"
+    networks:
+    - satoshifund-net
+  
+  mongo:
+    image: mongo:latest
+    container_name: satoshifund-mongo
+    restart: unless-stopped
+    volumes:
+    - satoshifund-data:/data/db
+    ports:
+    - "27017:27017"
+    networks:
+    - satoshifund-net
+
+# Defines volume for persistent MongoDB data
+volumes:
+  satoshifund-data:
+    driver: local
+
+# Defines network that allows services to communicate
+networks:
+  satoshifund-net:
+    driver: bridge
