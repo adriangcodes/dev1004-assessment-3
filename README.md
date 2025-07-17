@@ -233,7 +233,7 @@ For a consistent and isolated development environment, you can run the applicati
     ```bash
     docker-compose down
     ```
-    Your database data will be preserved in a Docker volume, so it will be available the next time you start the services.
+    >> Your database data will be preserved in a Docker volume, so it will be available the next time you start the services.
 
 ## API Endpoints
 
