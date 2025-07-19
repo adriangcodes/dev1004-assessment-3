@@ -10,9 +10,7 @@ services:
     restart: unless-stopped
     depends_on:
     - mongo
-    # Loads variables from the .env file
-    # env_file: .env
-    # Variables set here will take precedence over those in the .env file
+    # Set environment variables - to be overridden in CI/CD by GitHub Actions secrets
     environment:
       - MONGODB_URI=mongodb://mongo:27017/satoshifunddb-${NODE_ENV:-development}
       - NODE_ENV=${NODE_ENV:-development}
