@@ -38,21 +38,16 @@ jobs:
       - name: Build and push Docker image
         if: steps.docker_creds_check.outputs.present == 'true'
         run: |
-          docker compose build api
-          docker compose push api
+          docker compose -f Docker-compose.yml build api
+          docker compose -f Docker-compose.yml push api
 
       - name: Deploy services using Docker Compose
-
-        env:
-          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
-          IMAGE_TAG: ${{ github.sha }}
-          NODE_ENV: production
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
-        run: docker compose up -d
+        if: steps.docker_creds_check.outputs.present == 'true'
+        run: docker compose -f Docker-compose.yml up -d
 
       - name: Verify running containers
+        if: steps.docker_creds_check.outputs.present == 'true'
         run: |
           sleep 10 # Wait for services to initialize
-          docker compose ps
-          docker compose logs api
+          docker compose -f Docker-compose.yml ps
+          docker compose -f Docker-compose.yml logs api
