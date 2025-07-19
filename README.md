@@ -659,9 +659,7 @@ The following secrets should be configured in your GitHub repository:
 
 These are injected at runtime and not hardcoded into the source code or image.
 
->> Notes
-- This workflow assumes Docker and Docker Compose V2 are available in the runner
-- It’s intended for demonstration purposes — in real-world scenarios, deployment would be triggered via `push` or `pull_request` and use a remote host
+>> Note: this workflow assumes Docker and Docker Compose V2 are available in the runner. It’s intended for demonstration purposes — in real-world scenarios, deployment would be triggered via `push` or `pull_request` and use a remote host.
 
 ## Team
 
