@@ -233,7 +233,11 @@ For a consistent and isolated development environment, you can run the applicati
     ```bash
     docker-compose down
     ```
-    Your database data will be preserved in a Docker volume, so it will be available the next time you start the services.
+    >> Your database data will be preserved in a Docker volume, so it will be available the next time you start the services.
+
+### Application Architecture Diagram
+
+The Application Architecture Diagram for the containerised application is available [here](/docs/dev1004/ApplicationArchitectureDiagram.pdf)  
 
 ## API Endpoints
 
@@ -675,11 +679,19 @@ MongoDB is licensed under the Server Side Public License (SSPL), which permits u
 
 ## Project References
 
+Calve, J. (2023) ‘Writing good software architecture diagrams’, Medium, 22 February. Available at: https://medium.com/@jancalve/writing-good-software-architecture-diagrams-15c51eca4ce7 (Accessed: 19 July 2025).
+
 Chandan, D. 2023, Building a strong Node.js controller-based folder structure, Medium, viewed 18 May 2025, https://developerchandan.medium.com/building-a-strong-node-js-controller-based-folder-structure-a96c90ae667c.
 
 Docker. (2021). 9 tips for containerizing your Node.js application. [online] Docker Blog. Available at: https://www.docker.com/blog/9-tips-for-containerizing-your-node-js-application/ [Accessed 17 Jul. 2025].
 
+freeCodeCamp (2025) ‘How to automate CI/CD with GitHub Actions & streamline your workflow’, freeCodeCamp News, 3 months ago. Available at: https://www.freecodecamp.org/news/automate-cicd-with-github-actions-streamline-workflow/ (Accessed: 19 July 2025) 
+
 GeeksforGeeks. (n.d.). How to Dockerize an ExpressJS App?. [online] Available at: https://www.geeksforgeeks.org/linux-unix/how-to-dockerize-an-expressjs-app/ [Accessed 17 Jul. 2025].
+
+GitHub (2021) Understanding GitHub Actions. GitHub Docs. Available at: https://docs.github.com/en/actions/get-started/understanding-github-actions (Accessed: 19 July 2025).
+
+GitHub (2023) Build a CI/CD pipeline with GitHub Actions in four steps. GitHub Blog. Available at: https://github.blog/enterprise-software/ci-cd/build-ci-cd-pipeline-github-actions-four-steps/ (Accessed: 19 July 2025).
 
 Gyawali, V. 2023, Mastering Mongoose pre-hooks: A guide to enhancing data manipulation, Medium, viewed 18 May 2025, https://medium.com/@vikramgyawali57/mastering-mongoose-pre-hooks-a-guide-to-enhancing-data-manipulation-efbec44fc66f.
 
@@ -689,6 +701,16 @@ Kumar, F. 2023, Mastering Express.js controllers: The key to clean and scalable 
 
 Manalad, J. 2019, ‘Pre-save hooks in Mongoose.js’, Medium, viewed 18 May 2025, https://medium.com/@justinmanalad/pre-save-hooks-in-mongoose-js-cf1c0959dba2.
 
+massivebrains (2020) Use Same Dockerfile for Dev & Production, DEV Community. Available at: https://dev.to/massivebrains/use-same-dockerfile-for-dev-production-1l7f (Accessed: 17 July 2025).
+
+Miro (no date) Architectural diagrams: What is, how to draw and templates. Miro. Available at: https://miro.com/diagramming/what-is-software-architecture-diagramming/ (Accessed: 19 July 2025).
+
 Mongoose 2024, Mongoose documentation, Mongoose, viewed 17 May 2025, https://mongoosejs.com/docs/
 
 Naqeeb, M. (2022). Dockerizing a Node.js and Express.js App. [online] Medium. Available at: https://medium.com/@muhammadnaqeeb/dockerizing-a-node-js-and-express-js-app-9cb31cf9139e [Accessed 17 Jul. 2025].
+
+Palachi, E. (2025) ‘Architecture Diagram Basics & Best Practices’, vFunction Blog, 7 January. Available at: https://vfunction.com/blog/architecture-diagram-guide/ (Accessed: 19 July 2025).
+
+Stack Overflow (2017) How to configure different Dockerfile for development and production?, Stack Overflow. Available at: https://stackoverflow.com/questions/46440909/how-to-configure-different-dockerfile-for-development-and-production (Accessed: 17 July 2025).
+
+Wilson, R. (2023) 6 Docker Compose Best Practices for Dev and Prod, Release. Available at: https://release.com/blog/6-docker-compose-best-practices-for-dev-and-prod (Accessed: 17 July 2025).
