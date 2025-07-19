@@ -235,6 +235,10 @@ For a consistent and isolated development environment, you can run the applicati
     ```
     >> Your database data will be preserved in a Docker volume, so it will be available the next time you start the services.
 
+### Application Architecture Diagram
+
+The Application Architecture Diagram for the containerised application is available [here](/docs/dev1004/ApplicationArchitectureDiagram.pdf)  
+
 ## API Endpoints
 
 ### Authentication & User Management
