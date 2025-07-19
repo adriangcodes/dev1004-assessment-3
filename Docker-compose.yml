@@ -11,7 +11,7 @@ services:
     depends_on:
     - mongo
     # Loads variables from the .env file
-    env_file: .env
+    # env_file: .env
     # Variables set here will take precedence over those in the .env file
     environment:
       - MONGODB_URI=mongodb://mongo:27017/satoshifunddb-${NODE_ENV:-development}
