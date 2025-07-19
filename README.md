@@ -685,7 +685,13 @@ Chandan, D. 2023, Building a strong Node.js controller-based folder structure, M
 
 Docker. (2021). 9 tips for containerizing your Node.js application. [online] Docker Blog. Available at: https://www.docker.com/blog/9-tips-for-containerizing-your-node-js-application/ [Accessed 17 Jul. 2025].
 
+freeCodeCamp (2025) ‘How to automate CI/CD with GitHub Actions & streamline your workflow’, freeCodeCamp News, 3 months ago. Available at: https://www.freecodecamp.org/news/automate-cicd-with-github-actions-streamline-workflow/ (Accessed: 19 July 2025) 
+
 GeeksforGeeks. (n.d.). How to Dockerize an ExpressJS App?. [online] Available at: https://www.geeksforgeeks.org/linux-unix/how-to-dockerize-an-expressjs-app/ [Accessed 17 Jul. 2025].
+
+GitHub (2021) Understanding GitHub Actions. GitHub Docs. Available at: https://docs.github.com/en/actions/get-started/understanding-github-actions (Accessed: 19 July 2025).
+
+GitHub (2023) Build a CI/CD pipeline with GitHub Actions in four steps. GitHub Blog. Available at: https://github.blog/enterprise-software/ci-cd/build-ci-cd-pipeline-github-actions-four-steps/ (Accessed: 19 July 2025).
 
 Gyawali, V. 2023, Mastering Mongoose pre-hooks: A guide to enhancing data manipulation, Medium, viewed 18 May 2025, https://medium.com/@vikramgyawali57/mastering-mongoose-pre-hooks-a-guide-to-enhancing-data-manipulation-efbec44fc66f.
 
