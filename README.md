@@ -630,6 +630,39 @@ Below is a summary comparing our chosen technologies with alternatives that were
 
 These decisions reflect a balance between scalability, learning goals, and time constraints of the unit. For full justification of our architectural and planning choices, see the linked design document.
 
+## CI/CD Workflow
+
+This project uses GitHub Actions to simulate a simple CI/CD pipeline. The workflow is defined in:
+
+```
+.github/workflows/deploy.yml
+```
+
+### Workflow Summary
+
+- **Triggered manually** using the `workflow_dispatch` event
+- **Builds the Docker image** from the production-ready Dockerfile
+- **Optionally pushes** to Docker Hub if credentials (`DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`) are supplied as secrets
+- **Runs the container** using `docker compose` with production `.env` values
+- **Prints logs** and verifies running containers
+
+### Environment Variables (Secrets)
+
+The following secrets should be configured in your GitHub repository:
+
+| Secret Key           | Description                                |
+|----------------------|--------------------------------------------|
+| `DOCKERHUB_USERNAME` | Docker Hub login username                  |
+| `DOCKERHUB_TOKEN`    | Docker Hub access token (not your password)|
+| `JWT_SECRET`         | Secret key for signing JWT tokens          |
+| `FRONTEND_URL`       | Frontend app's origin for CORS validation  |
+
+These are injected at runtime and not hardcoded into the source code or image.
+
+>> Notes
+- This workflow assumes Docker and Docker Compose V2 are available in the runner
+- It’s intended for demonstration purposes — in real-world scenarios, deployment would be triggered via `push` or `pull_request` and use a remote host
+
 ## Team
 
 Developed as part of Coder Academy's Advanced Applications Subject (DEV1003) - Assessment 2, as a collaboration between:
