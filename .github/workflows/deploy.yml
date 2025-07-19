@@ -29,8 +29,8 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
         run: |
-          docker-compose build api
-          docker-compose push api
+          docker compose build api
+          docker compose push api
 
       - name: Deploy services using Docker Compose
         env:
@@ -39,10 +39,10 @@ jobs:
           NODE_ENV: production
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Verify running containers
         run: |
           sleep 10 # Wait for services to initialize
-          docker-compose ps
-          docker-compose logs api
+          docker compose ps
+          docker compose logs api
