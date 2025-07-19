@@ -679,6 +679,8 @@ MongoDB is licensed under the Server Side Public License (SSPL), which permits u
 
 ## Project References
 
+Calve, J. (2023) ‘Writing good software architecture diagrams’, Medium, 22 February. Available at: https://medium.com/@jancalve/writing-good-software-architecture-diagrams-15c51eca4ce7 (Accessed: 19 July 2025).
+
 Chandan, D. 2023, Building a strong Node.js controller-based folder structure, Medium, viewed 18 May 2025, https://developerchandan.medium.com/building-a-strong-node-js-controller-based-folder-structure-a96c90ae667c.
 
 Docker. (2021). 9 tips for containerizing your Node.js application. [online] Docker Blog. Available at: https://www.docker.com/blog/9-tips-for-containerizing-your-node-js-application/ [Accessed 17 Jul. 2025].
@@ -695,9 +697,13 @@ Manalad, J. 2019, ‘Pre-save hooks in Mongoose.js’, Medium, viewed 18 May 202
 
 massivebrains (2020) Use Same Dockerfile for Dev & Production, DEV Community. Available at: https://dev.to/massivebrains/use-same-dockerfile-for-dev-production-1l7f (Accessed: 17 July 2025).
 
+Miro (no date) Architectural diagrams: What is, how to draw and templates. Miro. Available at: https://miro.com/diagramming/what-is-software-architecture-diagramming/ (Accessed: 19 July 2025).
+
 Mongoose 2024, Mongoose documentation, Mongoose, viewed 17 May 2025, https://mongoosejs.com/docs/
 
 Naqeeb, M. (2022). Dockerizing a Node.js and Express.js App. [online] Medium. Available at: https://medium.com/@muhammadnaqeeb/dockerizing-a-node-js-and-express-js-app-9cb31cf9139e [Accessed 17 Jul. 2025].
+
+Palachi, E. (2025) ‘Architecture Diagram Basics & Best Practices’, vFunction Blog, 7 January. Available at: https://vfunction.com/blog/architecture-diagram-guide/ (Accessed: 19 July 2025).
 
 Stack Overflow (2017) How to configure different Dockerfile for development and production?, Stack Overflow. Available at: https://stackoverflow.com/questions/46440909/how-to-configure-different-dockerfile-for-development-and-production (Accessed: 17 July 2025).
 
