@@ -4,6 +4,7 @@
 .dockerignore
 Dockerfile
 Docker-compose.yml
+.github/
 
 # Node.js dependencies
 node_modules/
