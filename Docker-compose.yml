@@ -14,7 +14,6 @@ services:
     environment:
       - MONGODB_URI=mongodb://mongo:27017/satoshifunddb-${NODE_ENV:-development}
       - NODE_ENV=${NODE_ENV:-development}
-      # Following variables are securely sourced from .env
       - JWT_SECRET=${JWT_SECRET}
       - FRONTEND_URL=${FRONTEND_URL}
     ports:
