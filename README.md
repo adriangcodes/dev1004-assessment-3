@@ -643,7 +643,7 @@ This project uses GitHub Actions to simulate a simple CI/CD pipeline. The workfl
 - **Triggered manually** using the `workflow_dispatch` event
 - **Builds the Docker image** from the production-ready Dockerfile
 - **Optionally pushes** to Docker Hub if credentials (`DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`) are supplied as secrets
-- **Runs the container** using `docker compose` with production `.env` values
+- **Runs the container** using `the production Dockerfile and environment variables defined in GitHub Actions secrets
 - **Prints logs** and verifies running containers
 
 ### Environment Variables (Secrets)
@@ -657,9 +657,15 @@ The following secrets should be configured in your GitHub repository:
 | `JWT_SECRET`         | Secret key for signing JWT tokens          |
 | `FRONTEND_URL`       | Frontend app's origin for CORS validation  |
 
-These are injected at runtime and not hardcoded into the source code or image.
+### Setting Secrets
+
+To configure secrets, go to your GitHub repository’s Settings → Secrets and variables → Actions → New repository secret. Add each required secret (e.g., DOCKERHUB_USERNAME, DOCKERHUB_TOKEN, JWT_SECRET, FRONTEND_URL) with its corresponding value — these will be securely injected into the workflow at runtime and are not hardcoded into the source code or image.
 
 >> Note: this workflow assumes Docker and Docker Compose V2 are available in the runner. It’s intended for demonstration purposes — in real-world scenarios, deployment would be triggered via `push` or `pull_request` and use a remote host.
+
+### Running the Workflow
+
+To trigger the CI/CD pipeline, navigate to the Actions tab of your GitHub repository, select the "Deploy Backend (Simulated CI/CD)" workflow from the left sidebar, and click “Run workflow” next to the workflow_dispatch event trigger. Select the main branch, and this will initiate the build, push, and deployment process as defined in the workflow.
 
 ## Team
 
