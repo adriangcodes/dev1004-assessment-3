@@ -1,4 +1,53 @@
+# Dependencies
+node_modules/
 package-lock.json
-node_modules
+
+# Environment variables
 .env
-.vscode
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+
+# Build outputs
+dist/
+build/
+*.tgz
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Docker artifacts
+satoshifund-backend.tar.gz
+*.tar.gz
+
+# Temporary files
+tmp/
+temp/
+.cache/
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+.claude/
+specs/

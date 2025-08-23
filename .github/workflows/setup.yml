@@ -1,0 +1,127 @@
+name: Reusable Setup Workflow
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        default: '22'
+        type: string
+      mongodb-version:
+        description: 'MongoDB version to use'
+        required: false
+        default: '7.0'
+        type: string
+      install-dependencies:
+        description: 'Whether to install npm dependencies'
+        required: false
+        default: true
+        type: boolean
+      setup-mongodb:
+        description: 'Whether to setup MongoDB service'
+        required: false
+        default: false
+        type: boolean
+    outputs:
+      cache-key:
+        description: 'NPM cache key'
+        value: ${{ jobs.setup.outputs.cache-key }}
+      node-version:
+        description: 'Installed Node.js version'
+        value: ${{ jobs.setup.outputs.node-version }}
+
+jobs:
+  setup:
+    name: Environment Setup
+    runs-on: ubuntu-latest
+    outputs:
+      cache-key: ${{ steps.cache-key.outputs.key }}
+      node-version: ${{ steps.node-info.outputs.version }}
+    
+    # Services are always defined but MongoDB container will only be used if needed
+    services:
+      mongodb:
+        image: mongo:${{ inputs.mongodb-version }}
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js ${{ inputs.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: 'npm'
+
+      - name: Get Node.js version info
+        id: node-info
+        run: |
+          echo "version=$(node --version)" >> $GITHUB_OUTPUT
+          echo "npm-version=$(npm --version)" >> $GITHUB_OUTPUT
+
+      - name: Generate cache key
+        id: cache-key
+        run: |
+          echo "key=node-deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}" >> $GITHUB_OUTPUT
+
+      - name: Cache npm dependencies
+        if: ${{ inputs.install-dependencies }}
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ steps.cache-key.outputs.key }}
+          restore-keys: |
+            node-deps-${{ runner.os }}-
+            node-deps-
+
+      - name: Install dependencies
+        if: ${{ inputs.install-dependencies }}
+        run: |
+          echo "Installing dependencies..."
+          npm ci --prefer-offline --no-audit
+          echo "Dependencies installed"
+
+      - name: Verify MongoDB connection
+        if: ${{ inputs.setup-mongodb }}
+        run: |
+          echo "Verifying MongoDB connection..."
+          for i in {1..30}; do
+            if mongosh --host localhost:27017 --eval 'db.adminCommand("ping")' &>/dev/null; then
+              echo "MongoDB is accessible!"
+              mongosh --host localhost:27017 --eval 'db.version()'
+              break
+            fi
+            echo "Attempt $i/30: Waiting for MongoDB..."
+            sleep 2
+          done
+
+      - name: Setup environment variables
+        run: |
+          echo "Setting up environment variables..."
+          echo "NODE_ENV=test" >> $GITHUB_ENV
+          echo "JWT_SECRET=test-secret-key" >> $GITHUB_ENV
+          if [ "${{ inputs.setup-mongodb }}" == "true" ]; then
+            echo "MONGODB_URI=mongodb://localhost:27017/test-db" >> $GITHUB_ENV
+          fi
+
+      - name: Display setup summary
+        run: |
+          echo "Setup Summary:"
+          echo "=================="
+          echo "Node.js: $(node --version)"
+          echo "NPM: $(npm --version)"
+          echo "MongoDB: ${{ inputs.setup-mongodb && inputs.mongodb-version || 'Not configured' }}"
+          echo "Cache Key: ${{ steps.cache-key.outputs.key }}"
+          echo "Dependencies: ${{ inputs.install-dependencies && 'Installed' || 'Skipped' }}"
