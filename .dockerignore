@@ -17,6 +17,7 @@ npm-debug.log
 # Docs and README
 README.md
 docs/
+CICD.md
 
 # Test files
 tests/
