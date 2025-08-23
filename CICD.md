@@ -100,7 +100,7 @@ graph TD
 
 #### Deploy Job
 - **Purpose**: Deploy to AWS EC2
-- **Dependencies**: Requires build job success
+- **Dependencies**: Requires build and test job success
 - **Condition**: Only on production branch push
 - **Steps**:
   1. Configure AWS credentials
@@ -269,16 +269,16 @@ services:
 
 Configure these in Settings → Secrets and variables → Actions:
 
-| Secret Name | Description | Example |
-|------------|-------------|---------|
-| `DOCKERHUB_USERNAME` | Docker Hub username | `johndoe` |
-| `DOCKERHUB_TOKEN` | Docker Hub access token | `dckr_pat_xxxxx` |
-| `JWT_SECRET` | Production JWT secret | `complex-random-string` |
-| `FRONTEND_URL` | Production frontend URL | `https://app.example.com` |
-| `AWS_ACCESS_KEY_ID` | AWS IAM access key | `AKIAXXXXXXXXXXXXXXXX` |
-| `AWS_SECRET_ACCESS_KEY` | AWS IAM secret key | `wJalrXUtnFEMI/K7MDENG/xxxxx` |
-| `EC2_INSTANCE_ID` | EC2 instance identifier | `i-0123456789abcdef0` |
-| `EC2_HOST` | EC2 public hostname | `ec2-xx-xxx-xxx-xxx.ap-southeast-2.compute.amazonaws.com` |
+| Secret Name | Description | Example | Notes |
+|------------|-------------|---------|-------|
+| `DOCKERHUB_USERNAME` | Docker Hub username | `johndoe` | Required for image push |
+| `DOCKERHUB_TOKEN` | Docker Hub access token | `dckr_pat_xxxxx` | Use token, not password |
+| `JWT_SECRET` | Production JWT secret | `complex-random-string` | Generate with `openssl rand -base64 32` |
+| `FRONTEND_URL` | Production frontend URL | `https://app.example.com` | Your frontend domain |
+| `AWS_ACCESS_KEY_ID` | AWS IAM access key | `AKIAXXXXXXXXXXXXXXXX` | For deployment |
+| `AWS_SECRET_ACCESS_KEY` | AWS IAM secret key | `wJalrXUtnFEMI/K7MDENG/xxxxx` | Keep secure |
+| `EC2_INSTANCE_ID` | EC2 instance identifier | `i-0123456789abcdef0` | Your EC2 instance ID |
+| `EC2_HOST` | EC2 public hostname | `ec2-xx-xxx-xxx-xxx.ap-southeast-2.compute.amazonaws.com` | Your EC2 public DNS |
 
 ### Environment Variables
 
