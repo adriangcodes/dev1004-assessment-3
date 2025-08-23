@@ -202,7 +202,7 @@ graph LR
 
 ### EC2 Instance Requirements
 
-- **Instance Type**: t3.medium or higher recommended
+- **Instance Type**: t2.micro (free tier eligible)
 - **OS**: Ubuntu 22.04 LTS
 - **Required Software**:
   - Docker Engine
