@@ -95,7 +95,7 @@ graph TD
   1. Checkout code
   2. Set up Docker Buildx
   3. Login to Docker Hub
-  4. Build multi-platform image (linux/amd64, linux/arm64)
+  4. Build Docker image
   5. Push to Docker Hub with version tags
 
 #### Deploy Job
@@ -207,12 +207,13 @@ graph LR
 - **Required Software**:
   - Docker Engine
   - Docker Compose
-  - AWS SSM Agent (pre-installed on AWS AMIs)
-- **Security Groups**:
-  - Port 8080: API access
-  - Port 27017: MongoDB (internal only)
+  - AWS SSM Agent (install via snap if not present)
+- **Security Groups** (CRITICAL - most common issue):
+  - Port 22: SSH from your IP
+  - Port 8080: API access from 0.0.0.0/0 (anywhere)
+  - Port 27017: MongoDB (internal only - same security group)
   - Port 443: HTTPS (if using SSL)
-- **IAM Role**: AmazonSSMManagedInstanceCore policy
+- **IAM Role**: Must have `AmazonSSMManagedInstanceCore` policy attached
 
 ### Deployment Process
 
@@ -316,23 +317,33 @@ FRONTEND_URL=http://localhost:3000
 #### 1. Prepare EC2 Instance
 
 ```bash
+# Fix SSH key permissions first (required!)
+chmod 400 satoshifund-key.pem
+
 # SSH into EC2 instance
-ssh ubuntu@your-ec2-host
+ssh -i satoshifund-key.pem ubuntu@your-ec2-host
 
 # Install Docker
 curl -fsSL https://get.docker.com | sh
 sudo usermod -aG docker ubuntu
 
-# Install Docker Compose
+# Install Docker Compose (ensure full command is copied)
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
+
+# Logout and login again for docker group changes to take effect
+exit
+# Then SSH back in
 
 # Verify installations
 docker --version
 docker-compose --version
 
-# Ensure SSM agent is running
-sudo systemctl status amazon-ssm-agent
+# Install SSM agent if not present (Ubuntu via snap)
+sudo snap install amazon-ssm-agent --classic
+sudo snap start amazon-ssm-agent
+sudo snap services amazon-ssm-agent
+# Should show: enabled and active
 ```
 
 #### 2. Configure AWS IAM
@@ -367,6 +378,11 @@ Create IAM policy with these permissions:
 1. Navigate to repository Settings → Secrets and variables → Actions
 2. Add each secret from the Configuration Guide table
 3. For multi-line values, paste entire content
+4. **Critical secrets to double-check**:
+   - `EC2_HOST`: Must be the public DNS/IP (not private IP)
+   - `EC2_INSTANCE_ID`: Must match your instance exactly
+   - `DOCKERHUB_USERNAME`: Your Docker Hub username (without @)
+   - `DOCKERHUB_TOKEN`: Access token, not password
 
 #### 4. Update Configuration Files
 
@@ -398,12 +414,22 @@ git push origin production
 
 3. Verify deployment:
 ```bash
-# Check running containers on EC2
-ssh ubuntu@your-ec2-host
-docker ps
-
-# Test API endpoint
+# First test from your local machine
 curl http://your-ec2-host:8080/health
+
+# If that fails, SSH into EC2 to debug
+ssh -i satoshifund-key.pem ubuntu@your-ec2-host
+
+# Check running containers
+docker ps
+# Should show 2 containers: satoshifund-api and satoshifund-mongo
+
+# Check container logs if needed
+docker logs satoshifund-api
+docker logs satoshifund-mongo
+
+# Test from inside EC2
+curl http://localhost:8080/health
 ```
 
 ## Troubleshooting
@@ -442,7 +468,30 @@ curl http://your-ec2-host:8080/health
   run: npm test -- --testTimeout=30000
 ```
 
-#### 5. Artifact Upload Issues
+#### 5. MongoDB Service Timeout in GitHub Actions
+
+**Issue**: `Process completed with exit code 124` (timeout waiting for MongoDB)
+- The mongosh command may not be available in GitHub Actions
+- Solution: Remove the "Wait for MongoDB" step - service health checks are sufficient
+- The MongoDB service container's built-in health checks will ensure readiness
+
+#### 6. Health Check Timeout During Deployment
+
+**Issue**: Health check takes too long or times out
+- **Most common cause**: Security group port 8080 not open
+- Solution: Add inbound rule for port 8080 from 0.0.0.0/0
+- Verify in AWS Console: EC2 → Instance → Security → Security groups → Inbound rules
+- Test locally first: `ssh -i key.pem ubuntu@ec2-host` then `curl localhost:8080/health`
+
+#### 7. SSH Key Permission Error
+
+**Issue**: `Permissions 0644 for 'key.pem' are too open`
+```bash
+# Fix permissions
+chmod 400 your-key.pem
+```
+
+#### 8. Artifact Upload Issues
 
 **Issue**: `No files found for artifact`
 - Check file paths in workflow
@@ -459,6 +508,12 @@ gh run view <run-id>
 # Check EC2 deployment
 aws ssm get-command-invocation --command-id <command-id> --instance-id <instance-id>
 
+# Test if EC2 deployment is working
+curl http://your-ec2-host:8080/health
+
+# Test port connectivity
+nc -zv your-ec2-host 8080
+
 # Docker debugging on EC2
 docker logs satoshifund-api
 docker logs satoshifund-mongo
@@ -474,10 +529,20 @@ docker network inspect satoshifund-net
 
 ### Regular Tasks
 
+- **Immediately after setup**: Test health endpoint from browser and curl
 - **Weekly**: Review and rotate secrets
 - **Monthly**: Update dependencies and base images
 - **Quarterly**: Audit IAM permissions and security groups
 - **Annually**: Review and optimize pipeline performance
+
+### Post-Deployment Verification Checklist
+
+1. ✅ Security group has port 8080 open to 0.0.0.0/0
+2. ✅ Both containers running: `docker ps` shows 2 containers
+3. ✅ Health endpoint responds: `curl http://ec2-host:8080/health`
+4. ✅ Logs show no errors: `docker logs satoshifund-api`
+5. ✅ SSM agent is active: `sudo snap services amazon-ssm-agent`
+6. ✅ GitHub Actions show green checkmarks for all jobs
 
 ### Monitoring
 
