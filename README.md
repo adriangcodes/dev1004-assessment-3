@@ -39,7 +39,13 @@ While the system provides a complete flow from user registration through deal ac
 ### Github
 The original project can be found on [GitHub at the SatoshiFund organisation repo](https://github.com/orgs/SatoshiFundAus/repositories).
 
-This fork, featuring the containerized version of the application is available at: [https://github.com/adriangcodes/dev1004-assessment1-backend](https://github.com/adriangcodes/dev1004-assessment1-backend).
+The fork featuring the original containerized version of the application is available at: [https://github.com/adriangcodes/dev1004-assessment1-backend](https://github.com/adriangcodes/dev1004-assessment1-backend).
+
+The fork featuring CI/CD automation is available at [https://github.com/adriangcodes/dev1004-assessment-3](https://github.com/adriangcodes/dev1004-assessment-3).
+
+### CI/CD
+
+Please refer to [CI/CD](CICD.md) for further details.
 
 ### Frontend Integration
 
