@@ -95,12 +95,12 @@ graph TD
   1. Checkout code
   2. Set up Docker Buildx
   3. Login to Docker Hub
-  4. Build multi-platform image (linux/amd64, linux/arm64)
+  4. Build Docker image
   5. Push to Docker Hub with version tags
 
 #### Deploy Job
 - **Purpose**: Deploy to AWS EC2
-- **Dependencies**: Requires build job success
+- **Dependencies**: Requires build and test job success
 - **Condition**: Only on production branch push
 - **Steps**:
   1. Configure AWS credentials
@@ -202,17 +202,18 @@ graph LR
 
 ### EC2 Instance Requirements
 
-- **Instance Type**: t3.medium or higher recommended
+- **Instance Type**: t2.micro (free tier eligible)
 - **OS**: Ubuntu 22.04 LTS
 - **Required Software**:
   - Docker Engine
   - Docker Compose
-  - AWS SSM Agent (pre-installed on AWS AMIs)
-- **Security Groups**:
-  - Port 8080: API access
-  - Port 27017: MongoDB (internal only)
+  - AWS SSM Agent (install via snap if not present)
+- **Security Groups** (CRITICAL - most common issue):
+  - Port 22: SSH from your IP
+  - Port 8080: API access from 0.0.0.0/0 (anywhere)
+  - Port 27017: MongoDB (internal only - same security group)
   - Port 443: HTTPS (if using SSL)
-- **IAM Role**: AmazonSSMManagedInstanceCore policy
+- **IAM Role**: Must have `AmazonSSMManagedInstanceCore` policy attached
 
 ### Deployment Process
 
@@ -268,16 +269,16 @@ services:
 
 Configure these in Settings → Secrets and variables → Actions:
 
-| Secret Name | Description | Example |
-|------------|-------------|---------|
-| `DOCKERHUB_USERNAME` | Docker Hub username | `johndoe` |
-| `DOCKERHUB_TOKEN` | Docker Hub access token | `dckr_pat_xxxxx` |
-| `JWT_SECRET` | Production JWT secret | `complex-random-string` |
-| `FRONTEND_URL` | Production frontend URL | `https://app.example.com` |
-| `AWS_ACCESS_KEY_ID` | AWS IAM access key | `AKIAXXXXXXXXXXXXXXXX` |
-| `AWS_SECRET_ACCESS_KEY` | AWS IAM secret key | `wJalrXUtnFEMI/K7MDENG/xxxxx` |
-| `EC2_INSTANCE_ID` | EC2 instance identifier | `i-0123456789abcdef0` |
-| `EC2_HOST` | EC2 public hostname | `ec2-xx-xxx-xxx-xxx.ap-southeast-2.compute.amazonaws.com` |
+| Secret Name | Description | Example | Notes |
+|------------|-------------|---------|-------|
+| `DOCKERHUB_USERNAME` | Docker Hub username | `johndoe` | Required for image push |
+| `DOCKERHUB_TOKEN` | Docker Hub access token | `dckr_pat_xxxxx` | Use token, not password |
+| `JWT_SECRET` | Production JWT secret | `complex-random-string` | Generate with `openssl rand -base64 32` |
+| `FRONTEND_URL` | Production frontend URL | `https://app.example.com` | Your frontend domain |
+| `AWS_ACCESS_KEY_ID` | AWS IAM access key | `AKIAXXXXXXXXXXXXXXXX` | For deployment |
+| `AWS_SECRET_ACCESS_KEY` | AWS IAM secret key | `wJalrXUtnFEMI/K7MDENG/xxxxx` | Keep secure |
+| `EC2_INSTANCE_ID` | EC2 instance identifier | `i-0123456789abcdef0` | Your EC2 instance ID |
+| `EC2_HOST` | EC2 public hostname | `ec2-xx-xxx-xxx-xxx.ap-southeast-2.compute.amazonaws.com` | Your EC2 public DNS |
 
 ### Environment Variables
 
@@ -307,83 +308,260 @@ FRONTEND_URL=http://localhost:3000
    - Generate access token: Account Settings → Security → Access Tokens
 
 3. **AWS Account**
-   - Create AWS account
-   - Set up IAM user with EC2 and SSM permissions
-   - Launch EC2 instance with Ubuntu 22.04
+   - Create AWS account (12-month free tier available)
+   - Have AWS Console access ready
 
-### Step-by-Step Setup
+## Detailed AWS Setup Guide
 
-#### 1. Prepare EC2 Instance
+### Part 1: Launch EC2 Instance
+
+1. **Navigate to EC2 Dashboard**
+   - Sign in to AWS Console
+   - Search for "EC2" in the top search bar
+   - Click "EC2" to open the dashboard
+   - Click orange "Launch instance" button
+
+2. **Name and Tags**
+   - Name: `satoshifund-backend`
+   - Add tags (optional):
+     - Key: `Environment`, Value: `production`
+     - Key: `Application`, Value: `satoshifund`
+
+3. **Choose AMI (Operating System)**
+   - Select "Ubuntu"
+   - Choose "Ubuntu Server 22.04 LTS (HVM), SSD Volume Type"
+   - Architecture: 64-bit (x86)
+   - Ensure it says "Free tier eligible"
+
+4. **Instance Type**
+   - Select `t2.micro` (1 vCPU, 1 GB Memory)
+   - ✅ Must show "Free tier eligible"
+
+5. **Key Pair (CRITICAL)**
+   - Click "Create new key pair"
+   - Key pair name: `satoshifund-key`
+   - Key pair type: RSA
+   - Private key file format: .pem
+   - **⚠️ DOWNLOAD THE KEY - You can't download it again!**
+   - Save it securely
+
+6. **Network Settings**
+   - Click "Edit" next to Network settings
+   - VPC: Use default
+   - Subnet: No preference
+   - Auto-assign public IP: Enable
+   
+   **Security Group (CRITICAL):**
+   - Create security group
+   - Security group name: `satoshifund-sg`
+   - Description: `Security group for SatoshiFund backend`
+   
+   **Add Security Group Rules:**
+   - Rule 1 (SSH):
+     - Type: SSH
+     - Port: 22
+     - Source: My IP (or 0.0.0.0/0 if IP changes frequently)
+   
+   - Click "Add security group rule"
+   - Rule 2 (API):
+     - Type: Custom TCP
+     - Port: 8080
+     - Source: 0.0.0.0/0
+     - Description: API access
+   
+   - Click "Add security group rule"
+   - Rule 3 (MongoDB):
+     - Type: Custom TCP
+     - Port: 27017
+     - Source: Custom → Select the security group itself (self-reference)
+     - Description: MongoDB internal
+
+7. **Configure Storage**
+   - 8 GB gp3 (default)
+   - ✅ Free tier eligible up to 30 GB
+
+8. **Advanced Details** (Important!)
+   - Click to expand
+   - IAM instance profile: Leave empty for now (we'll create and attach later)
+   - Everything else: Leave as default
+
+9. **Review and Launch**
+   - Review all settings
+   - Click "Launch instance"
+   - Wait for "Success" message
+   - Click "View all instances"
+
+10. **Note Your Instance Details**
+    - Wait for Instance State: "Running"
+    - Note down:
+      - Instance ID: `i-xxxxxxxxxxxxxxxxx`
+      - Public IPv4 DNS: `ec2-xx-xxx-xxx-xxx.ap-southeast-2.compute.amazonaws.com`
+      - Public IPv4 address: `xx.xxx.xxx.xxx`
+
+### Part 2: Create IAM Role for EC2 SSM Access
+
+1. **Navigate to IAM**
+   - AWS Console → Search "IAM" → Click IAM
+   - Left sidebar → Click "Roles"
+   - Click "Create role"
+
+2. **Select Trusted Entity**
+   - Trusted entity type: AWS service
+   - Service: EC2
+   - Use case: EC2
+   - Click "Next"
+
+3. **Add Permissions**
+   - Search for: `AmazonSSMManagedInstanceCore`
+   - ✅ Check the box next to it
+   - Click "Next"
+
+4. **Name and Create**
+   - Role name: `satoshifund-ec2-ssm-role`
+   - Description: `Allows EC2 instances to use Systems Manager`
+   - Click "Create role"
+
+5. **Attach Role to EC2**
+   - Go back to EC2 Console
+   - Select your instance
+   - Actions → Security → Modify IAM role
+   - IAM role: Select `satoshifund-ec2-ssm-role`
+   - Click "Update IAM role"
+
+### Part 3: Create IAM User for GitHub Actions
+
+1. **Create Custom Policy First**
+   - IAM Console → Policies → Create policy
+   - Click "JSON" tab
+   - Paste this exactly:
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Action": [
+           "ssm:SendCommand",
+           "ssm:GetCommandInvocation",
+           "ssm:ListCommandInvocations"
+         ],
+         "Resource": "*"
+       },
+       {
+         "Effect": "Allow",
+         "Action": [
+           "ec2:DescribeInstances",
+           "ec2:DescribeInstanceStatus"
+         ],
+         "Resource": "*"
+       }
+     ]
+   }
+   ```
+   - Click "Next: Tags" → "Next: Review"
+   - Policy name: `SatoshiFund-Deploy-Policy`
+   - Click "Create policy"
+
+2. **Create IAM User**
+   - IAM Console → Users → Create user
+   - User name: `github-actions-satoshifund`
+   - Click "Next"
+
+3. **Set Permissions**
+   - Select "Attach policies directly"
+   - Search for: `SatoshiFund-Deploy-Policy`
+   - ✅ Check the box
+   - Click "Next" → "Create user"
+
+4. **Create Access Keys**
+   - Click on the username you just created
+   - Click "Security credentials" tab
+   - Scroll to "Access keys" → Click "Create access key"
+   - Select "Command Line Interface (CLI)"
+   - ✅ Check "I understand..."
+   - Click "Next"
+   - Description: `GitHub Actions CI/CD`
+   - Click "Create access key"
+   
+5. **SAVE CREDENTIALS** ⚠️
+   - **Access key ID**: Copy and save (looks like `AKIAXXXXXXXXX`)
+   - **Secret access key**: Copy and save (you won't see this again!)
+   - Click "Download .csv file" as backup
+   - Click "Done"
+
+### Part 4: Fix SSH Key Permissions (Local Machine)
+
+Before you can SSH into your EC2:
 
 ```bash
-# SSH into EC2 instance
-ssh ubuntu@your-ec2-host
+# Navigate to where you downloaded the key
+cd ~/Downloads  # or wherever you saved it
+
+# Fix permissions (REQUIRED - SSH will reject keys with wrong permissions)
+chmod 400 satoshifund-key.pem
+
+# Move to a safe location
+mkdir -p ~/.ssh/aws
+mv satoshifund-key.pem ~/.ssh/aws/
+```
+
+### Part 5: Configure EC2 Instance
+
+SSH into your EC2 instance and install required software:
+
+```bash
+# SSH into EC2 instance (use your actual EC2 public DNS)
+ssh -i ~/.ssh/aws/satoshifund-key.pem ubuntu@ec2-xx-xxx-xxx-xxx.ap-southeast-2.compute.amazonaws.com
+
+# If key is in different location, adjust path:
+# ssh -i /path/to/satoshifund-key.pem ubuntu@your-ec2-dns
 
 # Install Docker
 curl -fsSL https://get.docker.com | sh
 sudo usermod -aG docker ubuntu
 
-# Install Docker Compose
+# Install Docker Compose (ensure full command is copied)
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
+
+# Logout and login again for docker group changes to take effect
+exit
+# Then SSH back in
 
 # Verify installations
 docker --version
 docker-compose --version
 
-# Ensure SSM agent is running
-sudo systemctl status amazon-ssm-agent
+# Install SSM agent if not present (Ubuntu via snap)
+sudo snap install amazon-ssm-agent --classic
+sudo snap start amazon-ssm-agent
+sudo snap services amazon-ssm-agent
+# Should show: enabled and active
 ```
 
-#### 2. Configure AWS IAM
+### Part 6: Configure GitHub Secrets
 
-Create IAM policy with these permissions:
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "ssm:SendCommand",
-        "ssm:GetCommandInvocation",
-        "ssm:ListCommandInvocations"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "ec2:DescribeInstances"
-      ],
-      "Resource": "*"
-    }
-  ]
-}
-```
+**Note**: The IAM policy was already created in Part 3. Now we'll add the secrets to GitHub.
 
-#### 3. Configure GitHub Secrets
+1. **Navigate to GitHub Repository Settings**
+   - Go to your repository on GitHub
+   - Click Settings → Secrets and variables → Actions
+   - Click "New repository secret" for each
 
-1. Navigate to repository Settings → Secrets and variables → Actions
-2. Add each secret from the Configuration Guide table
-3. For multi-line values, paste entire content
+2. **Add Required Secrets** (use values from previous steps):
+   
+   | Secret Name | Where to Find Value |
+   |-------------|--------------------|
+   | `DOCKERHUB_USERNAME` | Your Docker Hub username |
+   | `DOCKERHUB_TOKEN` | Docker Hub access token (Prerequisites) |
+   | `JWT_SECRET` | Generate: `openssl rand -base64 32` |
+   | `FRONTEND_URL` | Use `http://localhost:3000` for now |
+   | `AWS_ACCESS_KEY_ID` | From Part 3, Step 5 (CSV file) |
+   | `AWS_SECRET_ACCESS_KEY` | From Part 3, Step 5 (CSV file) |
+   | `EC2_INSTANCE_ID` | From Part 1, Step 10 |
+   | `EC2_HOST` | From Part 1, Step 10 (Public DNS) |
 
-#### 4. Update Configuration Files
-
-1. **Update `.env.github-secrets`** with your specific values:
-```bash
-AWS_ACCESS_KEY_ID=your-actual-key
-AWS_SECRET_ACCESS_KEY=your-actual-secret
-EC2_INSTANCE_ID=your-instance-id
-EC2_HOST=your-ec2-hostname
-```
-
-2. **Modify Docker image name** in workflows if using different registry:
-```yaml
-IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/your-app-name
-```
-
-#### 5. Deploy
+### Part 7: Deploy to Production
 
 1. Push code to `production` branch:
 ```bash
@@ -398,13 +576,46 @@ git push origin production
 
 3. Verify deployment:
 ```bash
-# Check running containers on EC2
-ssh ubuntu@your-ec2-host
-docker ps
-
-# Test API endpoint
+# First test from your local machine
 curl http://your-ec2-host:8080/health
+
+# If that fails, SSH into EC2 to debug
+ssh -i satoshifund-key.pem ubuntu@your-ec2-host
+
+# Check running containers
+docker ps
+# Should show 2 containers: satoshifund-api and satoshifund-mongo
+
+# Check container logs if needed
+docker logs satoshifund-api
+docker logs satoshifund-mongo
+
+# Test from inside EC2
+curl http://localhost:8080/health
 ```
+
+## Setup Verification Checklist
+
+Before pushing to production, verify you have completed:
+
+### AWS Setup
+- [ ] EC2 instance launched (t2.micro, Ubuntu 22.04)
+- [ ] Security group has ports 22, 8080, 27017 configured
+- [ ] IAM role `satoshifund-ec2-ssm-role` attached to EC2
+- [ ] SSH key `satoshifund-key.pem` saved with 400 permissions
+- [ ] Can SSH into EC2 instance successfully
+- [ ] Docker and Docker Compose installed on EC2
+- [ ] SSM agent running on EC2
+
+### GitHub Setup
+- [ ] All 8 secrets added to GitHub repository
+- [ ] AWS access keys are from `github-actions-satoshifund` user
+- [ ] EC2_INSTANCE_ID matches your instance
+- [ ] EC2_HOST is the public DNS (not private IP)
+
+### Testing
+- [ ] Can access EC2 via: `curl http://[EC2-HOST]:8080/health` (after deployment)
+- [ ] GitHub Actions workflows show green checkmarks
 
 ## Troubleshooting
 
@@ -442,7 +653,30 @@ curl http://your-ec2-host:8080/health
   run: npm test -- --testTimeout=30000
 ```
 
-#### 5. Artifact Upload Issues
+#### 5. MongoDB Service Timeout in GitHub Actions
+
+**Issue**: `Process completed with exit code 124` (timeout waiting for MongoDB)
+- The mongosh command may not be available in GitHub Actions
+- Solution: Remove the "Wait for MongoDB" step - service health checks are sufficient
+- The MongoDB service container's built-in health checks will ensure readiness
+
+#### 6. Health Check Timeout During Deployment
+
+**Issue**: Health check takes too long or times out
+- **Most common cause**: Security group port 8080 not open
+- Solution: Add inbound rule for port 8080 from 0.0.0.0/0
+- Verify in AWS Console: EC2 → Instance → Security → Security groups → Inbound rules
+- Test locally first: `ssh -i key.pem ubuntu@ec2-host` then `curl localhost:8080/health`
+
+#### 7. SSH Key Permission Error
+
+**Issue**: `Permissions 0644 for 'key.pem' are too open`
+```bash
+# Fix permissions
+chmod 400 your-key.pem
+```
+
+#### 8. Artifact Upload Issues
 
 **Issue**: `No files found for artifact`
 - Check file paths in workflow
@@ -459,6 +693,12 @@ gh run view <run-id>
 # Check EC2 deployment
 aws ssm get-command-invocation --command-id <command-id> --instance-id <instance-id>
 
+# Test if EC2 deployment is working
+curl http://your-ec2-host:8080/health
+
+# Test port connectivity
+nc -zv your-ec2-host 8080
+
 # Docker debugging on EC2
 docker logs satoshifund-api
 docker logs satoshifund-mongo
@@ -474,10 +714,20 @@ docker network inspect satoshifund-net
 
 ### Regular Tasks
 
+- **Immediately after setup**: Test health endpoint from browser and curl
 - **Weekly**: Review and rotate secrets
 - **Monthly**: Update dependencies and base images
 - **Quarterly**: Audit IAM permissions and security groups
 - **Annually**: Review and optimize pipeline performance
+
+### Post-Deployment Verification Checklist
+
+1. ✅ Security group has port 8080 open to 0.0.0.0/0
+2. ✅ Both containers running: `docker ps` shows 2 containers
+3. ✅ Health endpoint responds: `curl http://ec2-host:8080/health`
+4. ✅ Logs show no errors: `docker logs satoshifund-api`
+5. ✅ SSM agent is active: `sudo snap services amazon-ssm-agent`
+6. ✅ GitHub Actions show green checkmarks for all jobs
 
 ### Monitoring
 
