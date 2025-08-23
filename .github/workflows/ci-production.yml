@@ -76,9 +76,6 @@ jobs:
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
 
-      - name: Wait for MongoDB
-        run: timeout 60s bash -c 'until mongosh --host localhost:27017 --eval "db.adminCommand(\"ping\")" &>/dev/null; do sleep 2; done'
-
       - name: Run database seeds
         env:
           MONGODB_URI: mongodb://localhost:27017/test-db
