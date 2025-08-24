@@ -738,9 +738,26 @@ docker network inspect satoshifund-net
 
 ---
 
-## Additional Resources
+## References
 
-- [GitHub Actions Documentation](https://docs.github.com/en/actions)
-- [Docker Documentation](https://docs.docker.com)
-- [AWS Systems Manager](https://docs.aws.amazon.com/systems-manager/)
-- [MongoDB Docker Guide](https://hub.docker.com/_/mongo)
+Amazon Web Services (n.d.) AWS Systems Manager [online]. Available at: https://docs.aws.amazon.com/systems-manager/ (Accessed: 24 August 2025).
+
+Amazon Web Services (n.d.) Amazon Elastic Compute Cloud (EC2) Documentation [online]. Available at: https://docs.aws.amazon.com/ec2/ (Accessed: 24 August 2025).
+
+Anyanwu, C. (2025) ‘How to Automate CI/CD with GitHub Actions and Streamline Your Workflow’, freeCodeCamp.org [online]. Available at: https://www.freecodecamp.org/news/automate-cicd-with-github-actions-streamline-workflow/ (Accessed: 24 August 2025).
+
+Docker (n.d.) Docker Docs [online]. Available at: https://docs.docker.com (Accessed: 24 August 2025).
+
+Docker Hub (n.d.) MongoDB Docker Guide [online]. Available at: https://hub.docker.com/_/mongo (Accessed: 24 August 2025).
+
+GitHub (2024) CI/CD: The what, why, and how [online]. Available at: https://resources.github.com/devops/ci-cd/?topic=devops (Accessed: 24 August 2025).
+
+GitHub (n.d.) GitHub Actions documentation [online]. Available at: https://docs.github.com/en/actions (Accessed: 24 August 2025).
+
+GitHub (n.d.) Running variations of jobs in a workflow, GitHub Actions documentation [online]. Available at: https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/run-job-variations (Accessed: 24 August 2025).
+
+GitHub Blog (2025) Douglas, B. How to build a CI/CD pipeline with GitHub Actions in four simple steps, GitHub Blog [online]. Available at: https://github.blog/enterprise-software/ci-cd/build-ci-cd-pipeline-github-actions-four-steps/ (Accessed: 24 August 2025).
+
+Hyett, A. (2023) ‘CI/CD Pipeline Using GitHub Actions: Automate Software Delivery (for free)’, YouTube video, 12:11. Available at: https://www.youtube.com/watch?v=p3W2XCD3smk (Accessed: 24 August 2025).
+
+Shaw, T. (2024) ‘CI/CD Tutorial using GitHub Actions – Automated Testing & Automated Deployments’, YouTube video, 6:12. Available at: https://www.youtube.com/watch?v=YLtlz88zrLg (Accessed: 24 August 2025).
