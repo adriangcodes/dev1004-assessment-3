@@ -22,6 +22,7 @@ jobs:
 
   # Quick test job - leverages the setup from previous job
   quick-test:
+    name: Development Tests - Node 22 / MongoDB 7.0
     needs: setup
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -41,7 +42,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js with cache
+      - name: Setup Node.js 22 with npm cache
         uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -50,7 +51,7 @@ jobs:
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
 
-      - name: Run quick test suite
+      - name: Execute Jest tests (development mode)
         env:
           MONGODB_URI: mongodb://localhost:27017/test-db
           NODE_ENV: test
@@ -59,7 +60,7 @@ jobs:
           echo "Running quick test suite..."
           npm test -- --maxWorkers=2 --silent
 
-      - name: Summary
+      - name: Generate workflow summary
         if: always()
         run: |
           echo "## Development CI Complete" >> $GITHUB_STEP_SUMMARY

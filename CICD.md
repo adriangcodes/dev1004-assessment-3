@@ -617,110 +617,7 @@ Before pushing to production, verify you have completed:
 - [ ] Can access EC2 via: `curl http://[EC2-HOST]:8080/health` (after deployment)
 - [ ] GitHub Actions workflows show green checkmarks
 
-## Troubleshooting
-
-### Common Issues and Solutions
-
-#### 1. Docker Build Failures
-
-**Issue**: `Cannot connect to Docker daemon`
-```yaml
-# Solution: Ensure Docker Buildx is set up
-- name: Set up Docker Buildx
-  uses: docker/setup-buildx-action@v3
-```
-
-#### 2. AWS SSM Connection Issues
-
-**Issue**: `Instance not found`
-- Verify EC2_INSTANCE_ID is correct
-- Ensure instance has SSM agent running
-- Check IAM permissions include SSM access
-
-#### 3. MongoDB Connection Failures
-
-**Issue**: `MongoNetworkError`
-- Verify Docker network configuration
-- Check MongoDB container is running
-- Ensure correct MONGODB_URI format
-
-#### 4. Test Failures
-
-**Issue**: `Jest tests timeout`
-```yaml
-# Solution: Increase test timeout
-- name: Run tests
-  run: npm test -- --testTimeout=30000
-```
-
-#### 5. MongoDB Service Timeout in GitHub Actions
-
-**Issue**: `Process completed with exit code 124` (timeout waiting for MongoDB)
-- The mongosh command may not be available in GitHub Actions
-- Solution: Remove the "Wait for MongoDB" step - service health checks are sufficient
-- The MongoDB service container's built-in health checks will ensure readiness
-
-#### 6. Health Check Timeout During Deployment
-
-**Issue**: Health check takes too long or times out
-- **Most common cause**: Security group port 8080 not open
-- Solution: Add inbound rule for port 8080 from 0.0.0.0/0
-- Verify in AWS Console: EC2 → Instance → Security → Security groups → Inbound rules
-- Test locally first: `ssh -i key.pem ubuntu@ec2-host` then `curl localhost:8080/health`
-
-#### 7. SSH Key Permission Error
-
-**Issue**: `Permissions 0644 for 'key.pem' are too open`
-```bash
-# Fix permissions
-chmod 400 your-key.pem
-```
-
-#### 8. Artifact Upload Issues
-
-**Issue**: `No files found for artifact`
-- Check file paths in workflow
-- Ensure tests generate output files
-- Verify artifact retention settings
-
-### Debugging Commands
-
-```bash
-# View GitHub Actions logs
-gh run list
-gh run view <run-id>
-
-# Check EC2 deployment
-aws ssm get-command-invocation --command-id <command-id> --instance-id <instance-id>
-
-# Test if EC2 deployment is working
-curl http://your-ec2-host:8080/health
-
-# Test port connectivity
-nc -zv your-ec2-host 8080
-
-# Docker debugging on EC2
-docker logs satoshifund-api
-docker logs satoshifund-mongo
-docker-compose ps
-docker-compose logs -f
-
-# Network debugging
-docker network ls
-docker network inspect satoshifund-net
-```
-
-## Maintenance
-
-### Regular Tasks
-
-- **Immediately after setup**: Test health endpoint from browser and curl
-- **Weekly**: Review and rotate secrets
-- **Monthly**: Update dependencies and base images
-- **Quarterly**: Audit IAM permissions and security groups
-- **Annually**: Review and optimize pipeline performance
-
-### Post-Deployment Verification Checklist
+## Post-Deployment Verification Checklist
 
 1. ✅ Security group has port 8080 open to 0.0.0.0/0
 2. ✅ Both containers running: `docker ps` shows 2 containers
@@ -729,18 +626,28 @@ docker network inspect satoshifund-net
 5. ✅ SSM agent is active: `sudo snap services amazon-ssm-agent`
 6. ✅ GitHub Actions show green checkmarks for all jobs
 
-### Monitoring
-
-- Enable GitHub Actions notifications
-- Set up AWS CloudWatch for EC2 monitoring
-- Configure application-level health checks
-- Implement alerting for deployment failures
-
 ---
 
-## Additional Resources
+## References
 
-- [GitHub Actions Documentation](https://docs.github.com/en/actions)
-- [Docker Documentation](https://docs.docker.com)
-- [AWS Systems Manager](https://docs.aws.amazon.com/systems-manager/)
-- [MongoDB Docker Guide](https://hub.docker.com/_/mongo)
+Amazon Web Services (n.d.) AWS Systems Manager [online]. Available at: https://docs.aws.amazon.com/systems-manager/ (Accessed: 24 August 2025).
+
+Amazon Web Services (n.d.) Amazon Elastic Compute Cloud (EC2) Documentation [online]. Available at: https://docs.aws.amazon.com/ec2/ (Accessed: 24 August 2025).
+
+Anyanwu, C. (2025) ‘How to Automate CI/CD with GitHub Actions and Streamline Your Workflow’, freeCodeCamp.org [online]. Available at: https://www.freecodecamp.org/news/automate-cicd-with-github-actions-streamline-workflow/ (Accessed: 24 August 2025).
+
+Docker (n.d.) Docker Docs [online]. Available at: https://docs.docker.com (Accessed: 24 August 2025).
+
+Docker Hub (n.d.) MongoDB Docker Guide [online]. Available at: https://hub.docker.com/_/mongo (Accessed: 24 August 2025).
+
+GitHub (2024) CI/CD: The what, why, and how [online]. Available at: https://resources.github.com/devops/ci-cd/?topic=devops (Accessed: 24 August 2025).
+
+GitHub (n.d.) GitHub Actions documentation [online]. Available at: https://docs.github.com/en/actions (Accessed: 24 August 2025).
+
+GitHub (n.d.) Running variations of jobs in a workflow, GitHub Actions documentation [online]. Available at: https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/run-job-variations (Accessed: 24 August 2025).
+
+GitHub Blog (2025) Douglas, B. How to build a CI/CD pipeline with GitHub Actions in four simple steps, GitHub Blog [online]. Available at: https://github.blog/enterprise-software/ci-cd/build-ci-cd-pipeline-github-actions-four-steps/ (Accessed: 24 August 2025).
+
+Hyett, A. (2023) ‘CI/CD Pipeline Using GitHub Actions: Automate Software Delivery (for free)’, YouTube video, 12:11. Available at: https://www.youtube.com/watch?v=p3W2XCD3smk (Accessed: 24 August 2025).
+
+Shaw, T. (2024) ‘CI/CD Tutorial using GitHub Actions – Automated Testing & Automated Deployments’, YouTube video, 6:12. Available at: https://www.youtube.com/watch?v=YLtlz88zrLg (Accessed: 24 August 2025).

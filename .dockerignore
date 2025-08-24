@@ -13,6 +13,7 @@ npm-debug.log
 # Environment files
 .env
 .env.example
+.env.github-secrets
 
 # Docs and README
 README.md
