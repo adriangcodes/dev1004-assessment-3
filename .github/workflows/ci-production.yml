@@ -42,7 +42,7 @@ jobs:
 
   # Job 2: Run Tests
   test:
-    name: Test Suite
+    name: Jest Tests - Node ${{ matrix.node-version }} / MongoDB ${{ matrix.mongodb-version }}
     needs: setup
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -76,12 +76,12 @@ jobs:
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
 
-      - name: Run database seeds
+      - name: Seed test database (MongoDB ${{ matrix.mongodb-version }})
         env:
           MONGODB_URI: mongodb://localhost:27017/test-db
         run: npm run seed || true
 
-      - name: Run tests with coverage
+      - name: Execute Jest test suite with coverage metrics
         id: test-execution
         env:
           MONGODB_URI: mongodb://localhost:27017/test-db
@@ -90,7 +90,7 @@ jobs:
         run: |
           npm test -- --coverage --coverageReporters=json --coverageReporters=lcov --json --outputFile=test-results.json --ci --maxWorkers=2 2>&1 | tee test-output.log
 
-      - name: Upload test results
+      - name: Archive test results - Node ${{ matrix.node-version }} / MongoDB ${{ matrix.mongodb-version }}
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -101,7 +101,7 @@ jobs:
             coverage/
           retention-days: 30
 
-      - name: Upload coverage reports
+      - name: Archive coverage metrics - Node ${{ matrix.node-version }} / MongoDB ${{ matrix.mongodb-version }}
         if: success()
         uses: actions/upload-artifact@v4
         with:
@@ -114,7 +114,7 @@ jobs:
 
   # Job 3: Build and Push Docker Image (only on production branch)
   build-docker:
-    name: Build & Push Docker Image
+    name: Build & Push Docker Image (SHA-${{ github.sha }})
     needs: test
     if: github.ref == 'refs/heads/production' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
@@ -164,7 +164,7 @@ jobs:
 
   # Job 4: Deploy to AWS EC2
   deploy:
-    name: Deploy to AWS EC2
+    name: Deploy to AWS EC2 Production (ap-southeast-2)
     needs: [test, build-docker]
     if: github.ref == 'refs/heads/production' && github.event_name == 'push'
     runs-on: ubuntu-latest
